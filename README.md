@@ -106,16 +106,16 @@ Every gateway serves the full developer guide at `/docs`. Complete one-file shop
 
 ## How it works
 
-```
- your server                                          internet
-┌────────────────────────────────────────────┐
-│ your websites                              │       ┌──────────────┐
-│    │ create invoice        ▲ signed webhook│   ┌──▶│ public node A│
-│    ▼                       │               │   │   └──────────────┘
-│ xmrgate ───────────────────┘               │───┤   ┌──────────────┐
-│   view key, scanner, one SQLite file       │   └──▶│ public node B│
-└────────────────────────────────────────────┘       └──────────────┘
-                                              blocks and mempool only
+```mermaid
+flowchart LR
+  subgraph server["Your server"]
+    sites["Your websites"]
+    gate["xmrgate<br/>view key · scanner · SQLite"]
+    sites -- "create invoice" --> gate
+    gate -- "signed webhook" --> sites
+  end
+  gate -- "blocks and mempool only" --> nodeA["Public node A"]
+  gate -- "blocks and mempool only" --> nodeB["Public node B"]
 ```
 
 Each invoice gets its own subaddress of your wallet. xmrgate downloads new blocks and the
