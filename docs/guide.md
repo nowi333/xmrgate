@@ -141,6 +141,9 @@ nothing.
 
 ### A. A WooCommerce shop
 
+> **Prefer to watch?** The [video tutorial](video/woocommerce-tutorial.mp4) (3:43) walks through
+> this whole section, from installing xmrgate to the first paid order.
+
 1. In the dashboard, under **Connect a website**, click **Download the WooCommerce plugin**.
 2. In WordPress, go to **Plugins → Add new → Upload plugin**, choose the file you just
    downloaded, and activate it.

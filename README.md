@@ -21,6 +21,13 @@ no Monero node to run, nothing to sync, no account to open and no fee.
 - **Instant feedback.** Customers see "Payment received" seconds after paying, before the
   payment is even confirmed.
 
+## Video tutorial
+
+Add Monero payments to an existing WooCommerce shop, from zero to the first paid order (3:43,
+English subtitles):
+
+[![Watch the WooCommerce tutorial](docs/video/woocommerce-tutorial.png)](docs/video/woocommerce-tutorial.mp4)
+
 ## Works with
 
 | Your site | How | Code needed |
