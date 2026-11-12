@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Monero payment</title>
+<link rel="stylesheet" href="/assets/app.css">
+</head>
+<body>
+<main class="wrap pay">
+  <div class="brand"><span class="dot"></span><span id="shop"></span></div>
+
+  <section class="card center hidden" id="view-pay">
+    <p class="muted" id="pay-title"></p>
+    <button class="tap amount" id="amount" type="button"></button>
+    <p class="muted small" id="fiat"></p>
+    <div id="partial" class="note warn hidden" role="status"></div>
+    <img class="qr" id="qr" alt="">
+    <button class="addr mono" id="address" type="button"></button>
+    <p class="hint" data-t="tap_hint"></p>
+    <p></p>
+    <a class="button primary block" id="open" data-t="open_wallet"></a>
+    <div class="status-line muted" role="status">
+      <span class="spinner"></span><span data-t="waiting"></span>
+    </div>
+    <p class="muted small" id="countdown"></p>
+  </section>
+
+  <section class="card center hidden" id="view-seen" role="status">
+    <div class="bigmark ok">✓</div>
+    <h1 data-t="seen_title"></h1>
+    <p class="muted" id="seen-text"></p>
+    <div class="progress"><div id="bar"></div></div>
+    <p class="muted small" id="seen-count"></p>
+    <p class="muted small" data-t="seen_close"></p>
+  </section>
+
+  <section class="card center hidden" id="view-confirmed" role="status">
+    <div class="bigmark ok">✓</div>
+    <h1 data-t="done_title"></h1>
+    <p class="muted" data-t="done_text"></p>
+    <a class="button primary block hidden" id="back-done" data-t="back"></a>
+  </section>
+
+  <section class="card center hidden" id="view-expired" role="status">
+    <div class="bigmark off">×</div>
+    <h1 data-t="expired_title"></h1>
+    <p class="muted" data-t="expired_text"></p>
+    <a class="button block hidden" id="back-expired" data-t="back"></a>
+  </section>
+
+  <p class="center muted small" id="order"></p>
+  <p class="center muted small" data-t="footer"></p>
+</main>
+<script src="/assets/common.js"></script>
+<script src="/assets/checkout.js"></script>
+</body>
+</html>

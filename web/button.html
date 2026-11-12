@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Pay with Monero</title>
+<link rel="stylesheet" href="/assets/app.css">
+</head>
+<body>
+<main class="wrap pay">
+  <div class="brand"><span class="dot"></span><span id="shop"></span></div>
+  <form class="card center" id="form" method="post">
+    <p class="muted" id="name"></p>
+    <div class="amount" id="price"></div>
+    <p class="muted small" id="rate-note"></p>
+    <div id="error" class="note bad hidden" role="alert"></div>
+    <p></p>
+    <button class="primary block" id="submit">Pay with Monero</button>
+  </form>
+  <p class="center muted small">Paid directly to the seller. No intermediary holds your money.</p>
+</main>
+<script src="/assets/common.js"></script>
+<script src="/assets/button.js"></script>
+</body>
+</html>

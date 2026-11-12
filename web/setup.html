@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>xmrgate setup</title>
+<link rel="stylesheet" href="/assets/app.css">
+</head>
+<body>
+<main class="wrap">
+  <div class="brand"><span class="dot"></span><span>xmrgate</span></div>
+  <form class="card" id="form" novalidate>
+    <h1 data-t="title"></h1>
+    <p class="muted" data-t="subtitle"></p>
+
+    <div id="code-row" class="hidden">
+      <label for="code" data-t="code_label"></label>
+      <input id="code" autocomplete="off" spellcheck="false">
+      <p class="hint" data-t="code_hint"></p>
+    </div>
+
+    <label for="address" data-t="address_label"></label>
+    <textarea id="address" class="mono" rows="3" autocomplete="off" spellcheck="false" required></textarea>
+    <p class="hint" data-t="address_hint"></p>
+
+    <label for="view_key" data-t="key_label"></label>
+    <div class="field-row">
+      <input id="view_key" class="mono" type="password" autocomplete="off" spellcheck="false" required>
+      <button type="button" id="toggle_key" data-t="show"></button>
+    </div>
+    <p class="hint" data-t="key_hint"></p>
+    <div id="wallet_note" class="note hidden" role="status"></div>
+
+    <label for="shop_name" data-t="shop_label"></label>
+    <input id="shop_name" autocomplete="organization" maxlength="80">
+    <p class="hint" data-t="shop_hint"></p>
+
+    <label for="password" data-t="password_label"></label>
+    <input id="password" type="password" autocomplete="new-password" minlength="8" required>
+    <p class="hint" data-t="password_hint"></p>
+
+    <div id="error" class="note bad hidden" role="alert"></div>
+    <p></p>
+    <button class="primary block" id="submit" data-t="submit"></button>
+    <div class="note info" data-t="safety"></div>
+  </form>
+</main>
+<script src="/assets/common.js"></script>
+<script src="/assets/setup.js"></script>
+</body>
+</html>

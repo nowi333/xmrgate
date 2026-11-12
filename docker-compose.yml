@@ -1,0 +1,26 @@
+# xmrgate behind Caddy, which obtains and renews the HTTPS certificate on its own.
+#
+#   1. Point a domain name (for example pay.example.com) at this server.
+#   2. Run:  XMRGATE_DOMAIN=pay.example.com docker compose up -d
+#   3. Run:  docker compose logs xmrgate   and open the setup address it prints,
+#      replacing YOUR-DOMAIN with your domain name.
+services:
+  xmrgate:
+    build: .
+    restart: unless-stopped
+    volumes:
+      - xmrgate-data:/data
+
+  caddy:
+    image: caddy:2
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    command: caddy reverse-proxy --from ${XMRGATE_DOMAIN:?set XMRGATE_DOMAIN to your domain name} --to xmrgate:3080
+    volumes:
+      - caddy-data:/data
+
+volumes:
+  xmrgate-data:
+  caddy-data:

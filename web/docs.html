@@ -1,0 +1,332 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>xmrgate developer guide</title>
+<link rel="stylesheet" href="/assets/app.css">
+</head>
+<body>
+<main class="wrap wide docs">
+  <div class="topbar">
+    <div class="brand"><span class="dot"></span><span>xmrgate developer guide</span></div>
+    <div class="actions"><a href="/admin">Dashboard</a></div>
+  </div>
+
+  <section class="card">
+    <h1>Add Monero payments to any website</h1>
+    <p>Three steps, in any language that can make an HTTP request:</p>
+    <ol>
+      <li>Your site asks xmrgate for an <strong>invoice</strong> and gets back a payment page address.</li>
+      <li>You send the customer to that page. They pay from their Monero wallet.</li>
+      <li>xmrgate calls your site back (a <strong>webhook</strong>) when the payment is confirmed.</li>
+    </ol>
+    <p>You need two values from the dashboard, under <em>Connect a website</em>: the
+    <strong>gateway address</strong> (<code class="origin">https://pay.example.com</code>) and the
+    <strong>secret key</strong> of your site. Keep the key on your server. Never put it in a web
+    page or an app.</p>
+    <p class="muted">No server code at all? Use a <a href="/admin">payment button</a> instead: a
+    fixed-price link you can paste anywhere.</p>
+  </section>
+
+  <section class="card">
+    <h2>1. Create an invoice</h2>
+<pre><code>curl <span class="origin">https://pay.example.com</span>/api/v1/invoices \
+  -H "Authorization: Bearer YOUR_SECRET_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"amount": "19.99", "currency": "EUR", "order_ref": "1042",
+       "callback_url": "https://shop.example/webhook",
+       "redirect_url": "https://shop.example/thanks"}'</code></pre>
+    <div class="table-scroll"><table>
+      <thead><tr><th>Field</th><th></th></tr></thead>
+      <tbody>
+        <tr><td><code>amount</code></td><td>Required. A decimal number, as text.</td></tr>
+        <tr><td><code>currency</code></td><td><code>XMR</code> (default), or a currency code such as <code>EUR</code> or <code>USD</code>. The amount is converted at the current rate and fixed for this invoice.</td></tr>
+        <tr><td><code>order_ref</code></td><td>Optional. Your own order number. Shown to the customer and sent back in webhooks.</td></tr>
+        <tr><td><code>description</code></td><td>Optional. Shown to the customer when there is no order number.</td></tr>
+        <tr><td><code>callback_url</code></td><td>Optional. Where xmrgate sends payment updates.</td></tr>
+        <tr><td><code>redirect_url</code></td><td>Optional. Where the customer is sent once the payment is confirmed.</td></tr>
+        <tr><td><code>expires_in_minutes</code></td><td>Optional. How long the customer has to pay. Defaults to the dashboard setting.</td></tr>
+        <tr><td><code>confirmations</code></td><td>Optional. Confirmations required before the invoice is paid. Defaults to the dashboard setting.</td></tr>
+      </tbody>
+    </table></div>
+    <p>The answer (HTTP 201) is the invoice. Send the customer to its <code>checkout_url</code>:</p>
+<pre><code>{
+  "id": "29c99cff2cd9438e6f70c4d37aaf800a",
+  "status": "pending",
+  "checkout_url": "<span class="origin">https://pay.example.com</span>/pay/29c99cff2cd9438e6f70c4d37aaf800a",
+  "amount_xmr": "0.03998",
+  "fiat_amount": "19.99",
+  "fiat_currency": "EUR",
+  "order_ref": "1042",
+  "address": "8...",
+  "expires_at": 1794347059
+}</code></pre>
+    <p>Errors are JSON too, with a stable <code>error</code> code and a readable <code>message</code>:
+    <code>unauthorized</code> (401), <code>invalid_amount</code>, <code>invalid_url</code>,
+    <code>invalid_invoice</code> (400), <code>rate_unavailable</code> (503).</p>
+  </section>
+
+  <section class="card">
+    <h2>2. Receive the webhook</h2>
+    <p>On every change of status, xmrgate sends a <code>POST</code> to your <code>callback_url</code>:</p>
+<pre><code>{ "event": "invoice.updated",
+  "invoice": { "id": "29c9...", "status": "confirmed", "order_ref": "1042",
+               "amount_xmr": "0.03998", "received_xmr": "0.03998", "confirmations": 1 } }</code></pre>
+    <p><strong>Check the signature before trusting it.</strong> The <code>X-Xmrgate-Signature</code>
+    header is the HMAC-SHA256 of the exact request body, keyed with your secret key, in hexadecimal.
+    Then answer with any 2xx status. If your site is down, xmrgate retries for several hours.</p>
+    <div class="table-scroll"><table>
+      <thead><tr><th>Status</th><th>Meaning</th><th>What to do</th></tr></thead>
+      <tbody>
+        <tr><td><code>seen</code></td><td>The full amount was detected and is being confirmed.</td><td>Tell the customer it is on its way. Do not ship yet.</td></tr>
+        <tr><td><code>confirmed</code></td><td>Paid.</td><td>Mark the order as paid.</td></tr>
+        <tr><td><code>underpaid</code></td><td>Less than the amount due was received.</td><td>Nothing, or contact the customer. It becomes <code>confirmed</code> if they send the rest.</td></tr>
+        <tr><td><code>expired</code></td><td>Time ran out and nothing was received.</td><td>Cancel the order.</td></tr>
+        <tr><td><code>pending</code></td><td>A payment that had been seen disappeared before confirming.</td><td>Treat the order as unpaid again.</td></tr>
+      </tbody>
+    </table></div>
+    <p class="muted">A <code>confirmed</code> invoice can go back to <code>seen</code> if the Monero
+    chain reorganises. It is rare and usually resolves itself within minutes, but do handle it if
+    you ship automatically.</p>
+  </section>
+
+  <section class="card">
+    <h2>Complete examples</h2>
+    <p>Each of these is a whole working shop in one file: a buy link that creates an invoice, and
+    a webhook that verifies the signature. They are tested against xmrgate itself.</p>
+    <details>
+      <summary>PHP</summary>
+<pre><code>&lt;?php
+// A complete shop integration in one file.
+//   GET  /buy      creates an invoice and sends the customer to the payment page
+//   POST /webhook  receives payment updates from xmrgate
+//
+// Run:  XMRGATE_URL=https://pay.example.com XMRGATE_KEY=... SHOP_URL=http://localhost:8000 \
+//       php -S localhost:8000 shop.php
+
+$gateway = rtrim(getenv(&#x27;XMRGATE_URL&#x27;), &#x27;/&#x27;);
+$key = getenv(&#x27;XMRGATE_KEY&#x27;);
+$shop = rtrim(getenv(&#x27;SHOP_URL&#x27;), &#x27;/&#x27;);
+$path = parse_url($_SERVER[&#x27;REQUEST_URI&#x27;], PHP_URL_PATH);
+
+if ($path === &#x27;/buy&#x27;) {
+    $order = &#x27;order-&#x27; . time();
+    $request = curl_init(&quot;$gateway/api/v1/invoices&quot;);
+    curl_setopt_array($request, [
+        CURLOPT_POST =&gt; true,
+        CURLOPT_RETURNTRANSFER =&gt; true,
+        CURLOPT_HTTPHEADER =&gt; [&quot;Authorization: Bearer $key&quot;, &#x27;Content-Type: application/json&#x27;],
+        CURLOPT_POSTFIELDS =&gt; json_encode([
+            &#x27;amount&#x27; =&gt; &#x27;19.99&#x27;,
+            &#x27;currency&#x27; =&gt; &#x27;EUR&#x27;,
+            &#x27;order_ref&#x27; =&gt; $order,
+            &#x27;callback_url&#x27; =&gt; &quot;$shop/webhook&quot;,
+            &#x27;redirect_url&#x27; =&gt; &quot;$shop/thanks&quot;,
+        ]),
+    ]);
+    $invoice = json_decode(curl_exec($request), true);
+    if (empty($invoice[&#x27;checkout_url&#x27;])) {
+        http_response_code(502);
+        exit(&#x27;Monero payments are unavailable right now.&#x27;);
+    }
+    header(&#x27;Location: &#x27; . $invoice[&#x27;checkout_url&#x27;], true, 303);
+    exit;
+}
+
+if ($path === &#x27;/webhook&#x27;) {
+    $body = file_get_contents(&#x27;php://input&#x27;);
+    $signature = $_SERVER[&#x27;HTTP_X_XMRGATE_SIGNATURE&#x27;] ?? &#x27;&#x27;;
+    // Only xmrgate knows the key, so a valid signature proves the update is genuine.
+    if (!hash_equals(hash_hmac(&#x27;sha256&#x27;, $body, $key), $signature)) {
+        http_response_code(401);
+        exit;
+    }
+    $invoice = json_decode($body, true)[&#x27;invoice&#x27;];
+    if ($invoice[&#x27;status&#x27;] === &#x27;confirmed&#x27;) {
+        // Mark the order as paid here.
+        error_log(&quot;PAID {$invoice[&#x27;order_ref&#x27;]} {$invoice[&#x27;received_xmr&#x27;]} XMR&quot;);
+    } else {
+        error_log(&quot;UPDATE {$invoice[&#x27;order_ref&#x27;]} {$invoice[&#x27;status&#x27;]}&quot;);
+    }
+    http_response_code(200);
+    exit;
+}
+
+echo $path === &#x27;/thanks&#x27; ? &#x27;Thank you!&#x27; : &#x27;&lt;a href=&quot;/buy&quot;&gt;Buy for 19.99 EUR&lt;/a&gt;&#x27;;</code></pre>
+    </details>
+    <details>
+      <summary>Node.js</summary>
+<pre><code>// A complete shop integration in one file. Needs Node 18 or later, no dependencies.
+//   GET  /buy      creates an invoice and sends the customer to the payment page
+//   POST /webhook  receives payment updates from xmrgate
+//
+// Run:  XMRGATE_URL=https://pay.example.com XMRGATE_KEY=... SHOP_URL=http://localhost:8000 \
+//       node shop.mjs
+
+import { createServer } from &#x27;node:http&#x27;;
+import { createHmac, timingSafeEqual } from &#x27;node:crypto&#x27;;
+
+const gateway = process.env.XMRGATE_URL.replace(/\/$/, &#x27;&#x27;);
+const key = process.env.XMRGATE_KEY;
+const shop = process.env.SHOP_URL.replace(/\/$/, &#x27;&#x27;);
+
+createServer(async (request, response) =&gt; {
+  const path = new URL(request.url, shop).pathname;
+
+  if (path === &#x27;/buy&#x27;) {
+    const answer = await fetch(`${gateway}/api/v1/invoices`, {
+      method: &#x27;POST&#x27;,
+      headers: { Authorization: `Bearer ${key}`, &#x27;Content-Type&#x27;: &#x27;application/json&#x27; },
+      body: JSON.stringify({
+        amount: &#x27;19.99&#x27;,
+        currency: &#x27;EUR&#x27;,
+        order_ref: `order-${Date.now()}`,
+        callback_url: `${shop}/webhook`,
+        redirect_url: `${shop}/thanks`,
+      }),
+    });
+    const invoice = await answer.json();
+    if (!invoice.checkout_url) {
+      response.writeHead(502).end(&#x27;Monero payments are unavailable right now.&#x27;);
+      return;
+    }
+    response.writeHead(303, { Location: invoice.checkout_url }).end();
+    return;
+  }
+
+  if (path === &#x27;/webhook&#x27;) {
+    const chunks = [];
+    for await (const chunk of request) chunks.push(chunk);
+    const body = Buffer.concat(chunks);
+    const expected = Buffer.from(createHmac(&#x27;sha256&#x27;, key).update(body).digest(&#x27;hex&#x27;));
+    const given = Buffer.from(String(request.headers[&#x27;x-xmrgate-signature&#x27;] || &#x27;&#x27;));
+    // Only xmrgate knows the key, so a valid signature proves the update is genuine.
+    if (given.length !== expected.length || !timingSafeEqual(given, expected)) {
+      response.writeHead(401).end();
+      return;
+    }
+    const { invoice } = JSON.parse(body);
+    if (invoice.status === &#x27;confirmed&#x27;) {
+      // Mark the order as paid here.
+      console.log(`PAID ${invoice.order_ref} ${invoice.received_xmr} XMR`);
+    } else {
+      console.log(`UPDATE ${invoice.order_ref} ${invoice.status}`);
+    }
+    response.writeHead(200).end();
+    return;
+  }
+
+  response
+    .writeHead(200, { &#x27;Content-Type&#x27;: &#x27;text/html&#x27; })
+    .end(path === &#x27;/thanks&#x27; ? &#x27;Thank you!&#x27; : &#x27;&lt;a href=&quot;/buy&quot;&gt;Buy for 19.99 EUR&lt;/a&gt;&#x27;);
+}).listen(new URL(shop).port || 80);</code></pre>
+    </details>
+    <details>
+      <summary>Python</summary>
+<pre><code># A complete shop integration in one file. Needs Python 3.8 or later, no dependencies.
+#   GET  /buy      creates an invoice and sends the customer to the payment page
+#   POST /webhook  receives payment updates from xmrgate
+#
+# Run:  XMRGATE_URL=https://pay.example.com XMRGATE_KEY=... SHOP_URL=http://localhost:8000 \
+#       python3 shop.py
+
+import hashlib
+import hmac
+import json
+import os
+import time
+import urllib.request
+from http.server import BaseHTTPRequestHandler, HTTPServer
+from urllib.parse import urlparse
+
+GATEWAY = os.environ[&quot;XMRGATE_URL&quot;].rstrip(&quot;/&quot;)
+KEY = os.environ[&quot;XMRGATE_KEY&quot;]
+SHOP = os.environ[&quot;SHOP_URL&quot;].rstrip(&quot;/&quot;)
+
+
+class Shop(BaseHTTPRequestHandler):
+    def reply(self, status, body=b&quot;&quot;, headers=None):
+        self.send_response(status)
+        for name, value in (headers or {}).items():
+            self.send_header(name, value)
+        self.send_header(&quot;Content-Length&quot;, str(len(body)))
+        self.end_headers()
+        self.wfile.write(body)
+
+    def do_GET(self):
+        path = urlparse(self.path).path
+        if path == &quot;/buy&quot;:
+            request = urllib.request.Request(
+                f&quot;{GATEWAY}/api/v1/invoices&quot;,
+                method=&quot;POST&quot;,
+                headers={&quot;Authorization&quot;: f&quot;Bearer {KEY}&quot;, &quot;Content-Type&quot;: &quot;application/json&quot;},
+                data=json.dumps({
+                    &quot;amount&quot;: &quot;19.99&quot;,
+                    &quot;currency&quot;: &quot;EUR&quot;,
+                    &quot;order_ref&quot;: f&quot;order-{int(time.time())}&quot;,
+                    &quot;callback_url&quot;: f&quot;{SHOP}/webhook&quot;,
+                    &quot;redirect_url&quot;: f&quot;{SHOP}/thanks&quot;,
+                }).encode(),
+            )
+            try:
+                with urllib.request.urlopen(request, timeout=20) as answer:
+                    invoice = json.load(answer)
+            except OSError:
+                self.reply(502, b&quot;Monero payments are unavailable right now.&quot;)
+                return
+            self.reply(303, headers={&quot;Location&quot;: invoice[&quot;checkout_url&quot;]})
+            return
+        page = b&quot;Thank you!&quot; if path == &quot;/thanks&quot; else b&#x27;&lt;a href=&quot;/buy&quot;&gt;Buy for 19.99 EUR&lt;/a&gt;&#x27;
+        self.reply(200, page, {&quot;Content-Type&quot;: &quot;text/html&quot;})
+
+    def do_POST(self):
+        if urlparse(self.path).path != &quot;/webhook&quot;:
+            self.reply(404)
+            return
+        body = self.rfile.read(int(self.headers.get(&quot;Content-Length&quot;, 0)))
+        expected = hmac.new(KEY.encode(), body, hashlib.sha256).hexdigest()
+        given = self.headers.get(&quot;X-Xmrgate-Signature&quot;, &quot;&quot;)
+        # Only xmrgate knows the key, so a valid signature proves the update is genuine.
+        if not hmac.compare_digest(expected, given):
+            self.reply(401)
+            return
+        invoice = json.loads(body)[&quot;invoice&quot;]
+        if invoice[&quot;status&quot;] == &quot;confirmed&quot;:
+            # Mark the order as paid here.
+            print(f&quot;PAID {invoice[&#x27;order_ref&#x27;]} {invoice[&#x27;received_xmr&#x27;]} XMR&quot;, flush=True)
+        else:
+            print(f&quot;UPDATE {invoice[&#x27;order_ref&#x27;]} {invoice[&#x27;status&#x27;]}&quot;, flush=True)
+        self.reply(200)
+
+    def log_message(self, *args):
+        pass
+
+
+HTTPServer((&quot;127.0.0.1&quot;, urlparse(SHOP).port or 80), Shop).serve_forever()</code></pre>
+    </details>
+  </section>
+
+  <section class="card">
+    <h2>Read an invoice</h2>
+<pre><code>curl <span class="origin">https://pay.example.com</span>/api/v1/invoices/INVOICE_ID \
+  -H "Authorization: Bearer YOUR_SECRET_KEY"</code></pre>
+    <p>Returns the same invoice object, with its current status. A site can only read the invoices
+    it created.</p>
+  </section>
+
+  <section class="card">
+    <h2>Good to know</h2>
+    <ul>
+      <li><strong>One key per site.</strong> Add each website in the dashboard. Each gets its own key
+      and only sees its own invoices.</li>
+      <li><strong>Amounts are text</strong>, to avoid rounding surprises. XMR amounts have up to 12 decimals.</li>
+      <li><strong>The payment page address is a secret link.</strong> Anyone who has it can see that invoice's amount and status, nothing more.</li>
+      <li><strong>Refunds</strong> are sent from your own wallet. xmrgate cannot move money.</li>
+      <li><strong>Health check:</strong> <code>GET /health</code> answers 200 when the scanner is working.</li>
+    </ul>
+  </section>
+</main>
+<script src="/assets/docs.js"></script>
+</body>
+</html>

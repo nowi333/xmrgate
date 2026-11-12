@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>xmrgate</title>
+<link rel="stylesheet" href="/assets/app.css">
+</head>
+<body>
+<main class="wrap wide">
+  <div class="topbar">
+    <div class="brand"><span class="dot"></span><span id="shop">xmrgate</span></div>
+    <div class="actions">
+      <span class="badge pending" id="state"></span>
+      <button class="link" id="logout" data-t="logout"></button>
+    </div>
+  </div>
+
+  <div id="alerts"></div>
+
+  <div class="stats">
+    <div class="stat"><div class="value" id="stat-paid">–</div><div class="label" data-t="stat_paid"></div></div>
+    <div class="stat"><div class="value" id="stat-received">–</div><div class="label" data-t="stat_received"></div></div>
+    <div class="stat"><div class="value" id="stat-height">–</div><div class="label" id="stat-height-label"></div></div>
+  </div>
+
+  <section class="card">
+    <h2 data-t="connect_title"></h2>
+    <p class="muted small" data-t="connect_text"></p>
+    <label for="gateway-url" data-t="gateway_label"></label>
+    <div class="copyfield"><input id="gateway-url" readonly><button type="button" id="copy-url" data-t="copy"></button></div>
+
+    <div class="subhead" data-t="sites_title"></div>
+    <div id="sites"></div>
+    <form id="site-form" class="copyfield">
+      <input id="site-name" maxlength="80" data-t-placeholder="site_placeholder" aria-label="Website name" required>
+      <button data-t="site_add"></button>
+    </form>
+
+    <div class="subhead" data-t="how_title"></div>
+    <ol class="steps">
+      <li>
+        <div><strong>WooCommerce.</strong> <span data-t="how_woo"></span></div>
+        <p><a class="button" href="/downloads/xmrgate-woocommerce.zip" download data-t="download"></a></p>
+      </li>
+      <li>
+        <div><strong data-t="how_any_title"></strong> <span data-t="how_any"></span></div>
+        <p><a class="button" href="/docs" target="_blank" rel="noopener" data-t="how_any_link"></a></p>
+      </li>
+      <li>
+        <div><strong data-t="how_nocode_title"></strong> <span data-t="how_nocode"></span></div>
+      </li>
+    </ol>
+  </section>
+
+  <section class="card">
+    <h2 data-t="link_title"></h2>
+    <p class="muted small" data-t="link_text"></p>
+    <form id="link-form" class="form-grid">
+      <input id="link-amount" inputmode="decimal" data-t-placeholder="amount" aria-label="Amount" required>
+      <select id="link-currency" aria-label="Currency">
+        <option>EUR</option><option>USD</option><option>GBP</option><option>CHF</option><option>CAD</option><option>XMR</option>
+      </select>
+      <input id="link-description" class="full" maxlength="200" data-t-placeholder="description">
+      <button class="primary full" data-t="link_create"></button>
+    </form>
+    <div id="link-error" class="note bad hidden" role="alert"></div>
+    <div id="link-result" class="hidden">
+      <p></p>
+      <div class="copyfield"><input id="link-url" readonly aria-label="Payment link"><button type="button" id="link-copy" data-t="copy"></button><a class="button" id="link-open" target="_blank" rel="noopener" data-t="open"></a></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2 data-t="buttons_title"></h2>
+    <p class="muted small" data-t="buttons_text"></p>
+    <form id="button-form" class="form-grid">
+      <input id="button-name" class="full" maxlength="80" data-t-placeholder="button_name" aria-label="What are you selling?" required>
+      <input id="button-amount" inputmode="decimal" data-t-placeholder="price" aria-label="Price" required>
+      <select id="button-currency" aria-label="Currency">
+        <option>EUR</option><option>USD</option><option>GBP</option><option>CHF</option><option>CAD</option><option>XMR</option>
+      </select>
+      <input id="button-redirect" class="full" data-t-placeholder="button_redirect" aria-label="Page to show after payment">
+      <button class="primary full" data-t="button_create"></button>
+    </form>
+    <div id="button-error" class="note bad hidden" role="alert"></div>
+    <div id="buttons"></div>
+  </section>
+
+  <section class="card">
+    <h2 data-t="payments_title"></h2>
+    <p class="muted" id="no-payments" data-t="payments_empty"></p>
+    <div class="table-scroll hidden" id="payments-wrap">
+      <table>
+        <thead><tr><th data-t="col_date"></th><th data-t="col_ref"></th><th data-t="col_amount"></th><th data-t="col_status"></th><th></th></tr></thead>
+        <tbody id="payments"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <details class="card" id="settings">
+    <summary data-t="settings_title"></summary>
+    <form id="settings-form">
+      <label for="set-shop" data-t="set_shop"></label>
+      <input id="set-shop" maxlength="80">
+
+      <label for="set-conf" data-t="set_conf"></label>
+      <input id="set-conf" type="number" min="0" max="100" inputmode="numeric">
+      <p class="hint" data-t="set_conf_hint"></p>
+
+      <label for="set-expiry" data-t="set_expiry"></label>
+      <input id="set-expiry" type="number" min="5" max="10080" inputmode="numeric">
+
+      <label for="set-url" data-t="set_url"></label>
+      <input id="set-url" placeholder="https://pay.example.com">
+      <p class="hint" data-t="set_url_hint"></p>
+
+      <label data-t="set_nodes"></label>
+      <p class="hint" data-t="set_nodes_hint"></p>
+      <div id="nodes"></div>
+      <div class="copyfield"><input id="node-url" placeholder="https://node.example.com:18089" aria-label="Node address"><button type="button" id="node-add" data-t="add"></button></div>
+      <div id="node-note" class="note hidden" role="status"></div>
+
+      <label for="set-tor" data-t="set_tor"></label>
+      <input id="set-tor" placeholder="127.0.0.1:9050">
+      <p class="hint" data-t="set_tor_hint"></p>
+
+      <div id="settings-error" class="note bad hidden" role="alert"></div>
+      <p></p>
+      <button class="primary" data-t="save"></button>
+      <span class="muted small" id="settings-saved"></span>
+    </form>
+    <p></p>
+    <p class="muted small"><span data-t="wallet_label"></span> <span class="mono" id="wallet"></span></p>
+  </details>
+
+  <details class="card">
+    <summary data-t="events_title"></summary>
+    <ul class="events" id="events"></ul>
+  </details>
+</main>
+<script src="/assets/common.js"></script>
+<script src="/assets/admin.js"></script>
+</body>
+</html>
