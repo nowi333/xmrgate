@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://nowi333.github.io/xmrgate/sitemap.xml

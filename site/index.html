@@ -3,14 +3,64 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>xmrgate · Self-hosted Monero payments</title>
-<meta name="description" content="Accept Monero (XMR) on any website with just your address and view key. No node, no account, no fees. Open source.">
-<meta property="og:title" content="xmrgate · Self-hosted Monero payments">
-<meta property="og:description" content="Accept Monero on any website with just your address and view key. No node, no fees. Funds go straight to your wallet.">
-<meta property="og:image" content="https://nowi333.github.io/xmrgate/video/woocommerce-tutorial.png">
+<title>xmrgate · Self-hosted Monero (XMR) payment gateway for WooCommerce and any website</title>
+<meta name="description" content="Accept Monero (XMR) payments on WooCommerce or any website with just your wallet address and view key. Self-hosted, open source, no node to run, no account, no fees.">
+<meta name="keywords" content="Monero payment gateway, accept Monero, XMR payments, WooCommerce Monero plugin, self-hosted crypto payments, Monero view key, open source payment processor">
+<meta name="author" content="nowi333">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="theme-color" content="#15110e">
+<link rel="canonical" href="https://nowi333.github.io/xmrgate/">
 <meta property="og:type" content="website">
+<meta property="og:site_name" content="xmrgate">
+<meta property="og:url" content="https://nowi333.github.io/xmrgate/">
+<meta property="og:title" content="xmrgate · Accept Monero on any website">
+<meta property="og:description" content="Self-hosted Monero payment gateway. Paste your address and view key: no node, no account, no fees. Funds go straight to your wallet.">
+<meta property="og:image" content="https://nowi333.github.io/xmrgate/video/woocommerce-tutorial.png">
+<meta property="og:image:width" content="1280">
+<meta property="og:image:height" content="720">
+<meta property="og:image:alt" content="xmrgate: accept Monero in your WooCommerce shop">
+<meta property="og:locale" content="en_US">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><circle cx='8' cy='8' r='7' fill='%23f26822'/></svg>">
+<meta name="twitter:site" content="@dev_nowi333">
+<meta name="twitter:creator" content="@dev_nowi333">
+<meta name="twitter:title" content="xmrgate · Accept Monero on any website">
+<meta name="twitter:description" content="Self-hosted Monero payment gateway. No node, no account, no fees. WooCommerce plugin included.">
+<meta name="twitter:image" content="https://nowi333.github.io/xmrgate/video/woocommerce-tutorial.png">
+<link rel="icon" href="logo.svg" type="image/svg+xml">
+<link rel="icon" href="logo-512.png" type="image/png" sizes="512x512">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "SoftwareApplication",
+      "name": "xmrgate",
+      "url": "https://nowi333.github.io/xmrgate/",
+      "image": "https://nowi333.github.io/xmrgate/logo-512.png",
+      "description": "Self-hosted Monero (XMR) payment gateway. Accept Monero on WooCommerce or any website with your wallet address and view key. No node, no account, no fees.",
+      "applicationCategory": "FinanceApplication",
+      "operatingSystem": "Linux, macOS, Docker",
+      "license": "https://opensource.org/licenses/MIT",
+      "isAccessibleForFree": true,
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+      "codeRepository": "https://github.com/nowi333/xmrgate",
+      "author": { "@type": "Person", "name": "nowi333", "url": "https://github.com/nowi333" },
+      "screenshot": "https://nowi333.github.io/xmrgate/images/customer-journey.png",
+      "featureList": ["Monero payments with a view key only", "WooCommerce plugin", "Payment buttons and links", "HTTP API with signed webhooks", "One subaddress per invoice"]
+    },
+    {
+      "@type": "VideoObject",
+      "name": "Accept Monero in your WooCommerce shop: full setup tutorial",
+      "description": "From zero to your first Monero payment on WooCommerce, step by step, with xmrgate.",
+      "thumbnailUrl": "https://nowi333.github.io/xmrgate/video/woocommerce-tutorial.png",
+      "contentUrl": "https://nowi333.github.io/xmrgate/video/woocommerce-tutorial.mp4",
+      "uploadDate": "2026-11-12",
+      "duration": "PT3M43S"
+    }
+  ]
+}
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -44,7 +94,7 @@ img, video { max-width: 100%; height: auto; display: block; }
 nav { position: sticky; top: 0; z-index: 10; backdrop-filter: blur(14px); background: rgba(21, 17, 14, .78); border-bottom: 1px solid rgba(58, 48, 41, .6); }
 nav .wrap { display: flex; align-items: center; justify-content: space-between; height: 64px; }
 .logo { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 20px; text-decoration: none; letter-spacing: -.01em; }
-.dot { width: 14px; height: 14px; border-radius: 50%; background: var(--orange); box-shadow: 0 0 18px rgba(242, 104, 34, .7); }
+.logo img { width: 30px; height: 30px; filter: drop-shadow(0 4px 14px rgba(242, 104, 34, .45)); }
 .links { display: flex; align-items: center; gap: 26px; font-size: 15px; color: var(--muted); }
 .links a { text-decoration: none; transition: color .15s; }
 .links a:hover { color: var(--text); }
@@ -166,7 +216,7 @@ footer .links { gap: 22px; }
 
 <nav>
   <div class="wrap">
-    <a class="logo" href="#"><span class="dot"></span>xmrgate</a>
+    <a class="logo" href="#"><img src="logo.svg" alt="" width="30" height="30">xmrgate</a>
     <div class="links">
       <a class="hide-sm" href="#how">How it works</a>
       <a class="hide-sm" href="#tutorial">Tutorial</a>
@@ -179,8 +229,10 @@ footer .links { gap: 22px; }
   </div>
 </nav>
 
+<main>
 <header class="hero">
   <div class="wrap">
+    <img src="logo.svg" alt="xmrgate" width="72" height="72" style="margin:0 auto 22px;filter:drop-shadow(0 12px 34px rgba(242,104,34,.5))">
     <span class="pill"><b>Open source</b> · MIT · Self-hosted</span>
     <h1>Accept <em>Monero</em> on any website</h1>
     <p class="lead">Paste your wallet address and view key. That's it. No node to sync, no account, no fees. Every payment goes straight to your own wallet.</p>
@@ -268,7 +320,7 @@ footer .links { gap: 22px; }
       <p class="sub">Add Monero to an existing WooCommerce shop, step by step. 3 minutes 43, English subtitles.</p>
     </div>
     <div class="video">
-      <video controls preload="none" poster="video/woocommerce-tutorial.png" playsinline>
+      <video controls preload="none" title="xmrgate WooCommerce tutorial" poster="video/woocommerce-tutorial.png" playsinline>
         <source src="video/woocommerce-tutorial.mp4" type="video/mp4">
       </video>
     </div>
@@ -352,9 +404,11 @@ X-Xmrgate-Signature: <span class="s">hmac-sha256(body)</span></pre>
   </div>
 </section>
 
+</main>
+
 <footer>
   <div class="wrap">
-    <span>xmrgate · MIT licensed</span>
+    <span style="display:flex;align-items:center;gap:10px"><img src="logo.svg" alt="" width="22" height="22">xmrgate · MIT licensed</span>
     <div class="links">
       <a href="https://github.com/nowi333/xmrgate">GitHub</a>
       <a href="https://github.com/nowi333/xmrgate/blob/main/docs/guide.md">Guide</a>
