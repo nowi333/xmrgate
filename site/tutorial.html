@@ -1,0 +1,455 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Monero payment setup guide for your stack · xmrgate</title>
+<meta name="description" content="Pick your server, your Monero wallet and your website (WooCommerce, PrestaShop, custom code, payment links). Get step-by-step instructions to accept Monero with xmrgate.">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="theme-color" content="#15110e">
+<link rel="canonical" href="https://nowi333.github.io/xmrgate/tutorial.html">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="xmrgate">
+<meta property="og:url" content="https://nowi333.github.io/xmrgate/tutorial.html">
+<meta property="og:title" content="Your Monero payment setup guide · xmrgate">
+<meta property="og:description" content="Choose your server, wallet and website. Get a step-by-step guide to accept Monero, made for your setup.">
+<meta property="og:image" content="https://nowi333.github.io/xmrgate/video/woocommerce-tutorial.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@dev_nowi333">
+<link rel="icon" href="logo.svg?v=2" type="image/svg+xml">
+<link rel="icon" href="logo-512.png?v=2" type="image/png" sizes="512x512">
+<link rel="apple-touch-icon" href="apple-touch-icon.png?v=2">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+.page-head { padding: 72px 0 32px; text-align: center; position: relative; }
+.page-head::before { content: ""; position: absolute; inset: -200px 0 auto; height: 600px; pointer-events: none; z-index: -1; background: radial-gradient(ellipse 55% 45% at 50% 30%, rgba(242, 104, 34, .18), transparent 70%); }
+.page-head h1 { font-size: clamp(36px, 6vw, 60px); margin: 18px auto 16px; }
+
+.picker { display: grid; gap: 22px; max-width: 920px; margin: 0 auto; }
+.q { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 24px; }
+.q[hidden] { display: none; }
+.q h2 { font-size: 19px; margin: 0 0 4px; letter-spacing: -.01em; display: flex; align-items: center; gap: 12px; }
+.q h2 .n { display: inline-grid; place-items: center; width: 28px; height: 28px; border-radius: 8px; background: var(--orange-soft); color: var(--orange); font-size: 14px; font-weight: 700; flex: none; }
+.q .hint { color: var(--dim); font-size: 14.5px; margin: 0 0 16px 40px; }
+.opts { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; }
+.opt { position: relative; }
+.opt input { position: absolute; opacity: 0; pointer-events: none; }
+.opt label { display: block; height: 100%; padding: 14px 16px; border: 1px solid var(--line); border-radius: 12px; cursor: pointer; background: rgba(255, 255, 255, .015); transition: border-color .15s, background .15s; }
+.opt label b { display: block; font-size: 15.5px; margin-bottom: 2px; }
+.opt label span { color: var(--dim); font-size: 13.5px; line-height: 1.45; display: block; }
+.opt label:hover { border-color: #5a4a3e; }
+.opt input:checked + label { border-color: var(--orange); background: var(--orange-soft); }
+.opt input:focus-visible + label { outline: 2px solid var(--orange); outline-offset: 2px; }
+.badge { display: inline-block; font-size: 11.5px; font-weight: 700; color: var(--green); background: rgba(60, 207, 142, .12); border-radius: 999px; padding: 1px 8px; margin-left: 6px; vertical-align: 1px; }
+.field { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-left: 40px; }
+.field input { flex: 1; min-width: 220px; background: #15110e; border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; color: var(--text); font-family: var(--mono); font-size: 15px; }
+.field input:focus { outline: none; border-color: var(--orange); }
+
+.guide { max-width: 920px; margin: 56px auto 0; }
+.guide-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 24px; }
+.guide-head h2 { margin: 0; font-size: clamp(26px, 3.6vw, 34px); }
+.summary { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+.summary span { font-size: 13px; padding: 4px 10px; border-radius: 999px; border: 1px solid var(--line); color: var(--muted); }
+ol.steps-list { list-style: none; padding: 0; margin: 0; counter-reset: st; display: grid; gap: 18px; }
+ol.steps-list > li { min-width: 0; counter-increment: st; background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 26px 26px 26px 80px; position: relative; }
+ol.steps-list > li::before { content: counter(st); position: absolute; left: 24px; top: 24px; width: 36px; height: 36px; border-radius: 10px; display: grid; place-items: center; background: var(--orange); color: #fff; font-weight: 700; }
+ol.steps-list h3 { margin: 4px 0 10px; font-size: 20px; letter-spacing: -.01em; }
+ol.steps-list p, ol.steps-list li li { color: var(--muted); font-size: 16px; }
+ol.steps-list p { margin: 0 0 12px; }
+ol.steps-list ul, ol.steps-list ol { margin: 0 0 12px; padding-left: 20px; color: var(--muted); }
+ol.steps-list ul li, ol.steps-list ol li { margin: 4px 0; }
+ol.steps-list b, ol.steps-list strong { color: var(--text); }
+ol.steps-list a { color: #ff9a62; }
+ol.steps-list code { font-family: var(--mono); font-size: 13.5px; color: var(--text); background: #2a221c; padding: 2px 7px; border-radius: 6px; }
+.cmd { position: relative; margin: 6px 0 14px; min-width: 0; max-width: 100%; }
+.cmd pre { margin: 0; background: #0f0c0a; border: 1px solid var(--line); border-radius: 12px; padding: 14px 92px 14px 16px; font-family: var(--mono); font-size: 14px; line-height: 1.7; color: #e8e1d8; overflow-x: auto; white-space: pre; }
+.cmd button { position: absolute; top: 8px; right: 8px; background: #2a221c; border: 1px solid var(--line); color: var(--muted); border-radius: 8px; padding: 6px 12px; font: 600 13px var(--sans); cursor: pointer; }
+.cmd button:hover { color: var(--text); border-color: #5a4a3e; }
+.tip { border-left: 3px solid var(--orange); background: rgba(242, 104, 34, .07); padding: 12px 16px; border-radius: 0 10px 10px 0; color: var(--muted); font-size: 15px; margin: 6px 0 12px; }
+.tip.ok { border-color: var(--green); background: rgba(60, 207, 142, .07); }
+.shot-sm { border-radius: 12px; border: 1px solid var(--line); margin: 8px 0 12px; }
+.empty { text-align: center; color: var(--dim); padding: 40px 0; }
+@media (max-width: 760px) {
+  .q { padding: 18px; }
+  .q .hint, .field { margin-left: 0; }
+  .opts { grid-template-columns: 1fr 1fr; }
+  ol.steps-list > li { padding: 70px 18px 20px; }
+  ol.steps-list > li::before { left: 18px; top: 20px; }
+  .cmd pre { font-size: 12.5px; padding-right: 16px; padding-top: 44px; }
+}
+@media print {
+  nav, .picker, .page-head, footer, .cmd button, .guide-head .btn { display: none !important; }
+  body { background: #fff; color: #000; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <a class="logo" href="./"><img src="logo.svg?v=2" alt="" width="30" height="30">xmrgate</a>
+    <div class="links">
+      <a class="hide-sm" href="./#how">How it works</a>
+      <a class="hide-sm" href="./#tutorial">Video</a>
+      <a class="btn btn-ghost btn-sm" href="https://github.com/nowi333/xmrgate">GitHub</a>
+    </div>
+  </div>
+</nav>
+
+<main>
+<header class="page-head">
+  <div class="wrap">
+    <span class="pill"><b>Setup guide</b> · made for your setup</span>
+    <h1>Your step-by-step guide</h1>
+    <p class="lead">Tell us what you use. We write the instructions for exactly that, with your own domain name in every command.</p>
+  </div>
+</header>
+
+<div class="wrap">
+  <form class="picker" id="picker" onsubmit="return false">
+    <div class="q">
+      <h2><span class="n">1</span>Where will xmrgate run?</h2>
+      <p class="hint">xmrgate is a small program that watches your wallet. It runs on a server you control.</p>
+      <div class="opts" data-name="host">
+        <div class="opt"><input type="radio" name="host" id="host-docker" value="docker"><label for="host-docker"><b>A server, with Docker<span class="badge">Easiest</span></b><span>Any cheap VPS. HTTPS is set up for you.</span></label></div>
+        <div class="opt"><input type="radio" name="host" id="host-binary" value="binary"><label for="host-binary"><b>A server, without Docker</b><span>Build and run the program yourself on Linux.</span></label></div>
+        <div class="opt"><input type="radio" name="host" id="host-demo" value="demo"><label for="host-demo"><b>Just try it first</b><span>A demo on your own computer, with fake payments.</span></label></div>
+      </div>
+    </div>
+
+    <div class="q" id="q-domain">
+      <h2><span class="n">2</span>Your gateway's address</h2>
+      <p class="hint">A domain or subdomain for xmrgate, like <code>pay.yourshop.com</code>. Your customers will see it on the payment page.</p>
+      <div class="field"><input id="domain" type="text" inputmode="url" autocomplete="off" spellcheck="false" placeholder="pay.yourshop.com" aria-label="Your gateway domain name"></div>
+    </div>
+
+    <div class="q" id="q-wallet">
+      <h2><span class="n">3</span>Your Monero wallet</h2>
+      <p class="hint">Where the money will arrive. You will copy two things from it: your address and your secret view key.</p>
+      <div class="opts" data-name="wallet">
+        <div class="opt"><input type="radio" name="wallet" id="w-gui" value="gui"><label for="w-gui"><b>Monero GUI</b><span>The official desktop wallet</span></label></div>
+        <div class="opt"><input type="radio" name="wallet" id="w-feather" value="feather"><label for="w-feather"><b>Feather</b><span>Desktop</span></label></div>
+        <div class="opt"><input type="radio" name="wallet" id="w-cake" value="cake"><label for="w-cake"><b>Cake Wallet</b><span>Phone or desktop</span></label></div>
+        <div class="opt"><input type="radio" name="wallet" id="w-cli" value="cli"><label for="w-cli"><b>Monero CLI</b><span>monero-wallet-cli</span></label></div>
+        <div class="opt"><input type="radio" name="wallet" id="w-other" value="other"><label for="w-other"><b>Another wallet</b><span>Any wallet where you hold the keys</span></label></div>
+      </div>
+    </div>
+
+    <div class="q" id="q-site">
+      <h2><span class="n">4</span>Where do you want to get paid?</h2>
+      <p class="hint">Pick the main one. You can add the others later from the same dashboard.</p>
+      <div class="opts" data-name="site">
+        <div class="opt"><input type="radio" name="site" id="s-woo" value="woo"><label for="s-woo"><b>WooCommerce</b><span>WordPress shop, ready-made plugin</span></label></div>
+        <div class="opt"><input type="radio" name="site" id="s-presta" value="presta"><label for="s-presta"><b>PrestaShop</b><span>Through the API</span></label></div>
+        <div class="opt"><input type="radio" name="site" id="s-code" value="code"><label for="s-code"><b>My own website or app</b><span>A few lines of code</span></label></div>
+        <div class="opt"><input type="radio" name="site" id="s-button" value="button"><label for="s-button"><b>A payment button</b><span>A link for a page, a bio, an email. No code.</span></label></div>
+        <div class="opt"><input type="radio" name="site" id="s-link" value="link"><label for="s-link"><b>One customer</b><span>Send a one-time payment link. No code.</span></label></div>
+      </div>
+    </div>
+
+    <div class="q" id="q-lang" hidden>
+      <h2><span class="n">5</span>Your website's language</h2>
+      <p class="hint">We'll point you to a complete, tested example in that language.</p>
+      <div class="opts" data-name="lang">
+        <div class="opt"><input type="radio" name="lang" id="l-php" value="php"><label for="l-php"><b>PHP</b></label></div>
+        <div class="opt"><input type="radio" name="lang" id="l-node" value="node"><label for="l-node"><b>Node.js</b></label></div>
+        <div class="opt"><input type="radio" name="lang" id="l-python" value="python"><label for="l-python"><b>Python</b></label></div>
+        <div class="opt"><input type="radio" name="lang" id="l-other" value="other"><label for="l-other"><b>Something else</b><span>Any language that can make HTTPS requests</span></label></div>
+      </div>
+    </div>
+  </form>
+
+  <section class="guide" id="guide" style="padding: 0 0 40px" aria-live="polite">
+    <div class="empty" id="empty">Answer the questions above and your guide appears here.</div>
+    <div id="out" hidden>
+      <div class="guide-head">
+        <div>
+          <h2>Your guide</h2>
+          <div class="summary" id="summary"></div>
+        </div>
+        <button class="btn btn-ghost btn-sm" id="share" type="button">Copy link to this guide</button>
+      </div>
+      <ol class="steps-list" id="steps"></ol>
+    </div>
+  </section>
+</div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span style="display:flex;align-items:center;gap:10px"><img src="logo.svg?v=2" alt="" width="22" height="22">xmrgate · MIT licensed</span>
+    <div class="links">
+      <a href="./">Home</a>
+      <a href="https://github.com/nowi333/xmrgate">GitHub</a>
+      <a href="https://github.com/nowi333/xmrgate/blob/main/docs/guide.md">User guide</a>
+      <a href="https://x.com/dev_nowi333">X</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var REPO = 'https://github.com/nowi333/xmrgate';
+  var GUIDE = REPO + '/blob/main/docs/guide.md';
+  var state = { host: '', wallet: '', site: '', lang: '', domain: '' };
+  var LABELS = {
+    host: { docker: 'Server with Docker', binary: 'Server without Docker', demo: 'Demo on my computer' },
+    wallet: { gui: 'Monero GUI', feather: 'Feather', cake: 'Cake Wallet', cli: 'Monero CLI', other: 'Other wallet' },
+    site: { woo: 'WooCommerce', presta: 'PrestaShop', code: 'Own website', button: 'Payment button', link: 'Payment link' },
+    lang: { php: 'PHP', node: 'Node.js', python: 'Python', other: 'Other language' }
+  };
+
+  function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function cleanDomain(v) { return String(v || '').trim().toLowerCase().replace(/^https?:\/\//, '').replace(/\/.*$/, '').replace(/[^a-z0-9.\-]/g, ''); }
+  function dom() { return state.domain || 'pay.yourshop.com'; }
+  function cmd(text) { return '<div class="cmd"><pre>' + esc(text) + '</pre><button type="button" class="copy">Copy</button></div>'; }
+  function tip(html, ok) { return '<div class="tip' + (ok ? ' ok' : '') + '">' + html + '</div>'; }
+  function step(title, body) { return '<li><h3>' + title + '</h3>' + body + '</li>'; }
+
+  /* ---------- Steps ---------- */
+
+  function serverPrereqs() {
+    return step('Get a server and point your domain at it',
+      '<p>You need:</p><ul>' +
+      '<li><b>A small Linux server.</b> The cheapest VPS is plenty: xmrgate uses about 12 MB of memory and does not download the blockchain. Ubuntu or Debian is a good choice.</li>' +
+      '<li><b>A DNS record</b> for <code>' + esc(dom()) + '</code>: in your domain provider\'s settings, add an <code>A</code> record pointing <code>' + esc(dom()) + '</code> to your server\'s IP address.</li>' +
+      '<li><b>Ports 80 and 443 open</b> on the server, so the HTTPS certificate can be issued.</li></ul>');
+  }
+
+  function hostSteps() {
+    var d = dom();
+    if (state.host === 'docker') {
+      return [
+        serverPrereqs(),
+        step('Install Docker', '<p>Connect to your server (<code>ssh root@your-server-ip</code>) and install Docker with its official script:</p>' +
+          cmd('curl -fsSL https://get.docker.com | sh') +
+          '<p>Already have Docker? Skip this step.</p>'),
+        step('Download and start xmrgate',
+          cmd('git clone ' + REPO + '.git') + cmd('cd xmrgate') + cmd('XMRGATE_DOMAIN=' + d + ' docker compose up -d') +
+          '<p>This starts xmrgate and a small web server (Caddy) that gets and renews the HTTPS certificate for <code>' + esc(d) + '</code> on its own. The first start builds the program and takes a few minutes.</p>'),
+        step('Get your setup address',
+          cmd('docker compose logs xmrgate') +
+          '<p>Look for a line like <code>https://YOUR-DOMAIN/setup?code=…</code>. Open it in your browser, with <code>' + esc(d) + '</code> in place of <code>YOUR-DOMAIN</code>:</p>' +
+          cmd('https://' + d + '/setup?code=…') +
+          tip('The code is there so only you can do the setup. Keep it to yourself.'))
+      ];
+    }
+    if (state.host === 'binary') {
+      return [
+        serverPrereqs(),
+        step('Install the build tools', '<p>On Ubuntu or Debian:</p>' +
+          cmd('sudo apt update && sudo apt install -y build-essential pkg-config libssl-dev git curl') +
+          '<p>Then install Rust:</p>' + cmd("curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y && . \"$HOME/.cargo/env\"")),
+        step('Build xmrgate',
+          cmd('git clone ' + REPO + '.git && cd xmrgate') + cmd('cargo build --release') +
+          cmd('sudo install -m 755 target/release/xmrgate /usr/local/bin/xmrgate') +
+          '<p>It builds a single program of about 10 MB.</p>'),
+        step('Run it as a service', '<p>Create <code>/etc/systemd/system/xmrgate.service</code> with:</p>' +
+          cmd('[Unit]\nDescription=xmrgate\nAfter=network-online.target\nWants=network-online.target\n\n[Service]\nExecStart=/usr/local/bin/xmrgate --data /var/lib/xmrgate\nDynamicUser=yes\nStateDirectory=xmrgate\nRestart=on-failure\n\n[Install]\nWantedBy=multi-user.target') +
+          cmd('sudo systemctl daemon-reload && sudo systemctl enable --now xmrgate') +
+          '<p>xmrgate now listens on <code>127.0.0.1:3080</code>, only reachable from the server itself.</p>'),
+        step('Add HTTPS with Caddy', '<p>Install Caddy by following <a href="https://caddyserver.com/docs/install#debian-ubuntu-raspbian">its official instructions</a>, then replace <code>/etc/caddy/Caddyfile</code> with:</p>' +
+          cmd(d + ' {\n\treverse_proxy 127.0.0.1:3080\n}') + cmd('sudo systemctl reload caddy') +
+          '<p>Caddy gets and renews the certificate for <code>' + esc(d) + '</code> on its own. Another web server (nginx, Apache) works too, as long as it serves HTTPS and forwards to <code>127.0.0.1:3080</code>.</p>'),
+        step('Get your setup address', cmd('sudo journalctl -u xmrgate | grep setup') +
+          '<p>Open the setup address it prints, with <code>' + esc(d) + '</code> in place of <code>YOUR-DOMAIN</code>:</p>' + cmd('https://' + d + '/setup?code=…'))
+      ];
+    }
+    return [
+      step('Install Rust and Git', '<p>On your own computer (macOS or Linux), install <a href="https://rustup.rs">Rust</a>:</p>' +
+        cmd("curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh") +
+        '<p>You also need <code>git</code>. On macOS it comes with the Xcode command line tools (<code>xcode-select --install</code>).</p>'),
+      step('Start the demo', cmd('git clone ' + REPO + '.git && cd xmrgate') + cmd('cargo run --example demo') +
+        '<p>It runs a complete gateway on a simulated Monero network, with sample payments in every state. No wallet and no funds needed.</p>'),
+      step('Look around', '<p>Open the dashboard address the demo prints, with the password <code>demo-password</code>. Open the payment pages too: you see exactly what your customers will see.</p>' +
+        '<img class="shot-sm" src="images/dashboard.png" alt="The xmrgate dashboard" loading="lazy" width="2000" height="1943">' +
+        tip('Ready for real payments? Choose <b>A server, with Docker</b> at the top of this page and your guide is rewritten.', true))
+    ];
+  }
+
+  function walletStep() {
+    var where = {
+      gui: '<ul><li><b>Address:</b> open the <b>Account</b> page and copy the address of your <b>primary account</b>.</li><li><b>Secret view key:</b> open <b>Settings → Seed &amp; keys</b> and copy the <b>secret view key</b>.</li></ul>',
+      feather: '<ul><li>Open <b>Wallet → Keys</b>. Copy the <b>primary address</b> and the <b>secret view key</b>.</li></ul>',
+      cake: '<ul><li><b>Address:</b> on the <b>Receive</b> screen, open the address list and copy the <b>primary</b> address.</li><li><b>Secret view key:</b> open <b>Menu → Security and backup → Show seed/keys</b> and copy the <b>private view key</b>.</li></ul>',
+      cli: '<p>In <code>monero-wallet-cli</code>:</p>' + cmd('address') + cmd('viewkey') + '<p>Copy the address at index <code>0</code> and the <b>secret</b> view key.</p>',
+      other: '<p>Look for a screen called <b>Keys</b>, <b>Secrets</b> or <b>Seed &amp; keys</b>. You need the <b>main address</b> and the <b>secret</b> (private) <b>view key</b>.</p>'
+    }[state.wallet];
+    return step('Copy your address and view key', where +
+      tip('Menus can differ a little between versions. Your main address starts with a <code>4</code>. If you paste a subaddress (starting with <code>8</code>), xmrgate tells you.') +
+      tip('Never share your <b>seed</b> (25 words) or your <b>spend key</b>. xmrgate never asks for them. The view key can only <i>see</i> incoming payments, not spend them.', true));
+  }
+
+  function setupStep() {
+    return step('Fill in the setup screen', '<p>On the setup page you opened:</p><ol>' +
+      '<li>Paste your <b>address</b> and your <b>secret view key</b>. xmrgate checks right away that they belong together.</li>' +
+      '<li>Optionally give your <b>shop name</b>: customers see it on the payment page.</li>' +
+      '<li>Choose a long <b>password</b> for your dashboard.</li>' +
+      '<li>Press <b>Start accepting Monero</b>.</li></ol>' +
+      '<img class="shot-sm" src="images/setup.png" alt="The xmrgate setup screen" loading="lazy" width="1280" height="2220" style="max-width:360px">' +
+      '<p>Your dashboard is now at <code>https://' + esc(dom()) + '</code>.</p>');
+  }
+
+  function apiSteps(note) {
+    var d = dom();
+    var files = { php: 'shop.php', node: 'shop.mjs', python: 'shop.py' };
+    var run = { php: 'php -S localhost:8000 shop.php', node: 'node shop.mjs', python: 'python3 shop.py' };
+    var lang = state.site === 'presta' ? 'php' : state.lang;
+    var example = files[lang]
+      ? '<p>A complete, tested shop in one file: <a href="' + REPO + '/blob/main/examples/integrations/' + files[lang] + '"><code>examples/integrations/' + files[lang] + '</code></a>. Try it as is:</p>' +
+        cmd('XMRGATE_URL=https://' + d + ' XMRGATE_KEY=your-secret-key SHOP_URL=http://localhost:8000 ' + run[lang])
+      : '<p>Your gateway serves the full developer guide at <code>https://' + esc(d) + '/docs</code>. Complete examples in PHP, Node.js and Python are in <a href="' + REPO + '/tree/main/examples/integrations"><code>examples/integrations</code></a>.</p>';
+    return [
+      step('Create a key for your website', '<p>In your dashboard, under <b>Connect a website</b>, type a name (for example <i>' + (state.site === 'presta' ? 'PrestaShop' : 'My shop') + '</i>) and press <b>Add website</b>. Copy its <b>secret key</b>.</p>' + (note || '')),
+      step('Create a payment when the customer checks out', '<p>Your site sends one request:</p>' +
+        cmd('curl https://' + d + '/api/v1/invoices \\\n  -H "Authorization: Bearer YOUR_SECRET_KEY" \\\n  -H "Content-Type: application/json" \\\n  -d \'{"amount": "19.99", "currency": "EUR", "order_ref": "1042",\n       "callback_url": "https://yourshop.com/xmrgate-webhook",\n       "redirect_url": "https://yourshop.com/thanks"}\'') +
+        '<p>The answer contains a <code>checkout_url</code>. Send the customer there: they see the amount in XMR and a QR code.</p>'),
+      step('Mark the order paid when xmrgate calls you', '<p>xmrgate calls your <code>callback_url</code> each time the payment changes. Each call is signed: check the <code>X-Xmrgate-Signature</code> header, which is the HMAC-SHA256 of the body with your secret key. Then mark the order paid when the status is <code>confirmed</code>.</p>' +
+        example + tip('Statuses: <code>pending</code> (nothing yet), <code>seen</code> (paid, being confirmed), <code>confirmed</code> (paid), <code>underpaid</code>, <code>expired</code>.'))
+    ];
+  }
+
+  function siteSteps() {
+    var d = dom();
+    switch (state.site) {
+      case 'woo':
+        return [
+          step('Install the WooCommerce plugin', '<ol>' +
+            '<li>In your xmrgate dashboard, under <b>Connect a website</b>, click <b>Download the WooCommerce plugin</b>.</li>' +
+            '<li>In WordPress, go to <b>Plugins → Add new → Upload plugin</b>, choose that file, then <b>Activate</b>.</li></ol>'),
+          step('Connect WooCommerce to your gateway', '<ol>' +
+            '<li>Go to <b>WooCommerce → Settings → Payments → Monero (xmrgate)</b>.</li>' +
+            '<li>Paste the <b>gateway address</b> (<code>https://' + esc(d) + '</code>) and your website\'s <b>secret key</b>, both shown in the dashboard with a Copy button.</li>' +
+            '<li>Press <b>Save changes</b>. WooCommerce says <i>"Connected to your xmrgate gateway"</i> when it works.</li></ol>' +
+            '<img class="shot-sm" src="images/woocommerce-settings.png" alt="WooCommerce settings for xmrgate" loading="lazy" width="2400" height="1728">' +
+            tip('Optional: <b>Discount or fee (%)</b> in the same settings. <code>-5</code> gives 5% off to customers paying in Monero, <code>2</code> adds a 2% fee.')),
+          step('Orders update on their own', '<p>Monero now appears at checkout. Orders go <b>On hold</b> when the payment is detected, then <b>Processing</b> once it is confirmed, usually within minutes.</p>' +
+            '<p>Prefer to watch? The <a href="./#tutorial">video tutorial</a> shows the whole WooCommerce setup in under 4 minutes.</p>')
+        ];
+      case 'presta':
+        return apiSteps(tip('There is no ready-made PrestaShop module yet. PrestaShop connects through the API, like any website: the PHP example below is the starting point for a small payment module.'));
+      case 'code':
+        return apiSteps('');
+      case 'button':
+        return [step('Create a payment button', '<ol>' +
+          '<li>In the dashboard, under <b>Payment buttons</b>, say what you are selling and its price.</li>' +
+          '<li>Optionally give the page your customer lands on after paying, for example a download page.</li>' +
+          '<li>Press <b>Create payment button</b>.</li></ol>' +
+          '<img class="shot-sm" src="images/payment-buttons.png" alt="Creating a payment button" loading="lazy" width="1776" height="956">' +
+          '<p>Then <b>Copy link</b> to paste it anywhere (a page, an email, your bio, a QR code on a flyer), or <b>Copy HTML</b> for a ready-made "Pay with Monero" link in your website.</p>' +
+          tip('Each person who presses the button gets their own payment page and their own address.', true))];
+      case 'link':
+        return [step('Send a payment link', '<p>In the dashboard, under <b>Request a payment</b>, type the amount, choose the currency, add a short description and press <b>Create payment link</b>. Send the link to your customer.</p>' +
+          '<img class="shot-sm" src="images/payment-link.png" alt="Creating a one-time payment link" loading="lazy" width="1776" height="676">' +
+          tip('A link works once and expires after 10 minutes. You can change that delay in <b>Settings</b>.'))];
+    }
+    return [];
+  }
+
+  function finalStep() {
+    return step('Test with a small amount', '<p>Make a real purchase or payment with a few cents of XMR. You should see <i>"Payment received"</i> within seconds, and the payment turn <b>Paid</b> in your dashboard after confirmation.</p>' +
+      '<p>Everything else (backups, updates, settings, troubleshooting) is in the <a href="' + GUIDE + '">user guide</a>.</p>' +
+      tip('xmrgate is young, well-tested software that has not been audited yet. Start with small amounts.'));
+  }
+
+  /* ---------- Render ---------- */
+
+  function complete() {
+    if (!state.host) return false;
+    if (state.host === 'demo') return true;
+    if (!state.wallet || !state.site) return false;
+    if (state.site === 'code' && !state.lang) return false;
+    return true;
+  }
+
+  function render() {
+    var demo = state.host === 'demo';
+    document.getElementById('q-domain').hidden = demo;
+    document.getElementById('q-wallet').hidden = demo;
+    document.getElementById('q-site').hidden = demo;
+    document.getElementById('q-lang').hidden = demo || state.site !== 'code';
+
+    var ok = complete();
+    document.getElementById('empty').hidden = ok;
+    document.getElementById('out').hidden = !ok;
+    writeHash();
+    if (!ok) return;
+
+    var html = hostSteps().join('');
+    if (!demo) html += walletStep() + setupStep() + siteSteps().join('') + finalStep();
+    document.getElementById('steps').innerHTML = html;
+
+    var chips = [LABELS.host[state.host]];
+    if (!demo) {
+      chips.push(dom(), LABELS.wallet[state.wallet], LABELS.site[state.site]);
+      if (state.site === 'code') chips.push(LABELS.lang[state.lang]);
+    }
+    document.getElementById('summary').innerHTML = chips.map(function (c) { return '<span>' + esc(c) + '</span>'; }).join('');
+  }
+
+  /* ---------- State in the URL, so a guide can be shared ---------- */
+
+  function writeHash() {
+    var parts = [];
+    ['host', 'domain', 'wallet', 'site', 'lang'].forEach(function (k) { if (state[k]) parts.push(k + '=' + encodeURIComponent(state[k])); });
+    var h = parts.length ? '#' + parts.join('&') : '';
+    if (location.hash !== h) history.replaceState(null, '', location.pathname + location.search + h);
+  }
+
+  function readHash() {
+    location.hash.replace(/^#/, '').split('&').forEach(function (p) {
+      var kv = p.split('='); if (!kv[0] || !(kv[0] in state)) return;
+      var v = decodeURIComponent(kv[1] || '');
+      if (kv[0] === 'domain') v = cleanDomain(v);
+      else if (!LABELS[kv[0]] || !LABELS[kv[0]][v]) return;
+      state[kv[0]] = v;
+    });
+    ['host', 'wallet', 'site', 'lang'].forEach(function (k) {
+      if (state[k]) { var el = document.querySelector('input[name="' + k + '"][value="' + state[k] + '"]'); if (el) el.checked = true; }
+    });
+    document.getElementById('domain').value = state.domain;
+  }
+
+  /* ---------- Events ---------- */
+
+  var guideShown = false;
+  document.getElementById('picker').addEventListener('change', function (e) {
+    if (e.target.type !== 'radio') return;
+    state[e.target.name] = e.target.value;
+    var wasOk = complete();
+    render();
+    if (complete() && !guideShown) {
+      guideShown = true;
+      document.getElementById('guide').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  });
+  document.getElementById('domain').addEventListener('input', function (e) {
+    state.domain = cleanDomain(e.target.value);
+    render();
+  });
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest('.copy');
+    if (b) {
+      var text = b.previousElementSibling.textContent;
+      (navigator.clipboard ? navigator.clipboard.writeText(text) : Promise.reject()).then(function () {
+        b.textContent = 'Copied'; setTimeout(function () { b.textContent = 'Copy'; }, 1400);
+      }, function () { b.textContent = 'Select & copy'; });
+    }
+    if (e.target.id === 'share') {
+      var s = e.target;
+      (navigator.clipboard ? navigator.clipboard.writeText(location.href) : Promise.reject()).then(function () {
+        s.textContent = 'Link copied'; setTimeout(function () { s.textContent = 'Copy link to this guide'; }, 1600);
+      }, function () {});
+    }
+  });
+
+  readHash();
+  guideShown = complete();
+  render();
+})();
+</script>
+</body>
+</html>

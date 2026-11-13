@@ -47,7 +47,7 @@ nothing to your first payment. No technical background is needed for most of it.
 On your server, with [Docker](https://docs.docker.com/engine/install/) installed:
 
 ```bash
-git clone https://github.com/nowi333/plugin.git xmrgate
+git clone https://github.com/nowi333/xmrgate.git
 ```
 
 ```bash

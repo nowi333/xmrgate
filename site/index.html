@@ -26,9 +26,9 @@
 <meta name="twitter:title" content="xmrgate · Accept Monero on any website">
 <meta name="twitter:description" content="Self-hosted Monero payment gateway. No node, no account, no fees. WooCommerce plugin included.">
 <meta name="twitter:image" content="https://nowi333.github.io/xmrgate/video/woocommerce-tutorial.png">
-<link rel="icon" href="logo.svg" type="image/svg+xml">
-<link rel="icon" href="logo-512.png" type="image/png" sizes="512x512">
-<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" href="logo.svg?v=2" type="image/svg+xml">
+<link rel="icon" href="logo-512.png?v=2" type="image/png" sizes="512x512">
+<link rel="apple-touch-icon" href="apple-touch-icon.png?v=2">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -37,7 +37,7 @@
       "@type": "SoftwareApplication",
       "name": "xmrgate",
       "url": "https://nowi333.github.io/xmrgate/",
-      "image": "https://nowi333.github.io/xmrgate/logo-512.png",
+      "image": "https://nowi333.github.io/xmrgate/logo-512.png?v=2",
       "description": "Self-hosted Monero (XMR) payment gateway. Accept Monero on WooCommerce or any website with your wallet address and view key. No node, no account, no fees.",
       "applicationCategory": "FinanceApplication",
       "operatingSystem": "Linux, macOS, Docker",
@@ -64,162 +64,16 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<style>
-:root {
-  --bg: #15110e;
-  --bg-2: #1c1713;
-  --card: #211b16;
-  --line: #3a3029;
-  --text: #f5efe8;
-  --muted: #b4a798;
-  --dim: #8a7d70;
-  --orange: #f26822;
-  --orange-soft: rgba(242, 104, 34, .14);
-  --green: #3ccf8e;
-  --radius: 18px;
-  --sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
-  --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
-}
-* { box-sizing: border-box; }
-html { scroll-behavior: smooth; }
-body {
-  margin: 0; background: var(--bg); color: var(--text); font-family: var(--sans);
-  font-size: 17px; line-height: 1.6; -webkit-font-smoothing: antialiased; overflow-x: hidden;
-}
-a { color: inherit; }
-img, video { max-width: 100%; height: auto; display: block; }
-.wrap { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
-
-/* Nav */
-nav { position: sticky; top: 0; z-index: 10; backdrop-filter: blur(14px); background: rgba(21, 17, 14, .78); border-bottom: 1px solid rgba(58, 48, 41, .6); }
-nav .wrap { display: flex; align-items: center; justify-content: space-between; height: 64px; }
-.logo { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 20px; text-decoration: none; letter-spacing: -.01em; }
-.logo img { width: 30px; height: 30px; filter: drop-shadow(0 4px 14px rgba(242, 104, 34, .45)); }
-.links { display: flex; align-items: center; gap: 26px; font-size: 15px; color: var(--muted); }
-.links a { text-decoration: none; transition: color .15s; }
-.links a:hover { color: var(--text); }
-@media (max-width: 760px) { .links .hide-sm { display: none; } }
-
-/* Buttons */
-.btn { display: inline-flex; align-items: center; gap: 10px; padding: 13px 22px; border-radius: 12px; font-weight: 600; font-size: 16px; text-decoration: none; transition: transform .15s, background .15s, border-color .15s; border: 1px solid transparent; }
-.btn:hover { transform: translateY(-1px); }
-.btn-primary { background: var(--orange); color: #fff; box-shadow: 0 10px 30px rgba(242, 104, 34, .3); }
-.btn-primary:hover { background: #ff7731; }
-.btn-ghost { border-color: var(--line); color: var(--text); background: rgba(255, 255, 255, .02); }
-.btn-ghost:hover { border-color: #5a4a3e; }
-.btn-sm { padding: 8px 14px; font-size: 14px; border-radius: 10px; }
-.btn svg { width: 18px; height: 18px; }
-
-/* Hero */
-.hero { position: relative; padding: 96px 0 64px; text-align: center; }
-.hero::before {
-  content: ""; position: absolute; inset: -200px 0 auto; height: 760px; pointer-events: none; z-index: -1;
-  background: radial-gradient(ellipse 60% 50% at 50% 30%, rgba(242, 104, 34, .22), transparent 70%);
-}
-.pill { display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; border-radius: 999px; border: 1px solid var(--line); background: rgba(33, 27, 22, .7); color: var(--muted); font-size: 14px; }
-.pill b { color: var(--orange); font-weight: 600; }
-h1 { font-size: clamp(40px, 7vw, 76px); line-height: 1.04; letter-spacing: -.035em; margin: 26px auto 22px; font-weight: 800; max-width: 900px; }
-h1 em { font-style: normal; background: linear-gradient(90deg, #ff8a4c, var(--orange)); -webkit-background-clip: text; background-clip: text; color: transparent; }
-.lead { font-size: clamp(18px, 2.2vw, 21px); color: var(--muted); max-width: 680px; margin: 0 auto 36px; }
-.cta { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
-.facts { display: flex; gap: 12px 28px; justify-content: center; flex-wrap: wrap; margin-top: 34px; color: var(--dim); font-size: 15px; }
-.facts span::before { content: "✓"; color: var(--green); margin-right: 8px; font-weight: 700; }
-
-.shot { margin-top: 64px; border-radius: 22px; border: 1px solid var(--line); background: var(--bg-2); padding: 14px; box-shadow: 0 50px 120px rgba(0, 0, 0, .5); }
-.shot img { border-radius: 12px; width: 100%; }
-
-/* Sections */
-section { padding: 88px 0; }
-.eyebrow { color: var(--orange); font-weight: 600; font-size: 14px; letter-spacing: .1em; text-transform: uppercase; }
-h2 { font-size: clamp(30px, 4.4vw, 46px); line-height: 1.12; letter-spacing: -.025em; margin: 12px 0 16px; font-weight: 800; }
-.sub { color: var(--muted); font-size: 19px; max-width: 640px; margin: 0; }
-.head { margin-bottom: 48px; }
-.center { text-align: center; }
-.center .sub { margin: 0 auto; }
-
-/* Steps */
-.steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; counter-reset: s; }
-.step { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 28px; position: relative; }
-.step::before { counter-increment: s; content: counter(s); display: grid; place-items: center; width: 38px; height: 38px; border-radius: 11px; background: var(--orange-soft); color: var(--orange); font-weight: 700; margin-bottom: 18px; }
-.step h3 { margin: 0 0 8px; font-size: 20px; letter-spacing: -.01em; }
-.step p { margin: 0; color: var(--muted); font-size: 16px; }
-.step code { font-family: var(--mono); font-size: 13.5px; color: var(--text); background: #2a221c; padding: 2px 7px; border-radius: 6px; }
-
-/* Features */
-.grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
-.feat { background: linear-gradient(180deg, var(--card), rgba(33, 27, 22, .4)); border: 1px solid var(--line); border-radius: var(--radius); padding: 28px; }
-.feat .ic { width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center; background: var(--orange-soft); margin-bottom: 18px; }
-.feat .ic svg { width: 22px; height: 22px; stroke: var(--orange); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-.feat h3 { margin: 0 0 8px; font-size: 19px; letter-spacing: -.01em; }
-.feat p { margin: 0; color: var(--muted); font-size: 15.5px; }
-
-/* Video */
-.video { border-radius: 22px; overflow: hidden; border: 1px solid var(--line); box-shadow: 0 40px 100px rgba(0, 0, 0, .5); background: #000; }
-.video video { width: 100%; aspect-ratio: 16 / 9; }
-
-/* Works with */
-.works { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
-.work { border: 1px solid var(--line); border-radius: var(--radius); padding: 26px; background: var(--card); display: flex; flex-direction: column; }
-.work h3 { margin: 0 0 6px; font-size: 19px; }
-.work p { margin: 0 0 18px; color: var(--muted); font-size: 15.5px; flex: 1; }
-.tag { align-self: flex-start; font-size: 13px; font-weight: 600; padding: 4px 10px; border-radius: 999px; background: rgba(60, 207, 142, .12); color: var(--green); }
-.tag.code { background: var(--orange-soft); color: var(--orange); }
-
-/* Split */
-.split { display: grid; grid-template-columns: 1fr 1.1fr; gap: 56px; align-items: center; }
-.split img { border-radius: 16px; border: 1px solid var(--line); }
-ul.checks { list-style: none; padding: 0; margin: 28px 0 0; display: grid; gap: 16px; }
-ul.checks li { display: grid; grid-template-columns: 26px 1fr; gap: 12px; color: var(--muted); }
-ul.checks li::before { content: ""; width: 22px; height: 22px; margin-top: 3px; border-radius: 50%; background: var(--orange-soft) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f26822' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12l5 5L20 7'/%3E%3C/svg%3E") center / 13px no-repeat; }
-ul.checks b { color: var(--text); font-weight: 600; }
-
-/* Code */
-.term { background: #0f0c0a; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; box-shadow: 0 30px 80px rgba(0, 0, 0, .45); }
-.term .bar { display: flex; align-items: center; gap: 8px; padding: 14px 18px; background: #1b1612; border-bottom: 1px solid var(--line); }
-.term .bar i { width: 12px; height: 12px; border-radius: 50%; display: block; }
-.term .bar span { margin-left: 10px; color: var(--dim); font-size: 13px; }
-.term pre { margin: 0; padding: 22px 24px; font-family: var(--mono); font-size: 14.5px; line-height: 1.8; overflow-x: auto; color: #e8e1d8; }
-.term .c { color: var(--dim); }
-.term .p { color: var(--orange); user-select: none; }
-.term .s { color: #f0b48f; }
-
-/* Final CTA */
-.final { text-align: center; border: 1px solid var(--line); border-radius: 28px; padding: 72px 28px; background: radial-gradient(ellipse 70% 90% at 50% 0%, rgba(242, 104, 34, .2), transparent 70%), var(--bg-2); }
-.final h2 { margin-top: 0; }
-.final .cta { margin-top: 32px; }
-.note { margin-top: 26px; color: var(--dim); font-size: 14.5px; }
-
-footer { padding: 48px 0 56px; color: var(--dim); font-size: 14.5px; }
-footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
-footer a { color: var(--muted); text-decoration: none; }
-footer a:hover { color: var(--text); }
-footer .links { gap: 22px; }
-
-@media (max-width: 960px) {
-  .works { grid-template-columns: repeat(2, 1fr); }
-  .split { grid-template-columns: 1fr; gap: 36px; }
-}
-@media (max-width: 760px) {
-  body { font-size: 16px; }
-  .wrap { padding: 0 16px; }
-  .hero { padding: 64px 0 40px; }
-  section { padding: 64px 0; }
-  .steps, .grid, .works { grid-template-columns: 1fr; }
-  .shot { padding: 6px; margin-top: 44px; border-radius: 14px; }
-  .term pre { font-size: 12.5px; padding: 18px; }
-  .final { padding: 52px 20px; }
-}
-@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .btn { transition: none; } }
-</style>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <nav>
   <div class="wrap">
-    <a class="logo" href="#"><img src="logo.svg" alt="" width="30" height="30">xmrgate</a>
+    <a class="logo" href="#"><img src="logo.svg?v=2" alt="" width="30" height="30">xmrgate</a>
     <div class="links">
       <a class="hide-sm" href="#how">How it works</a>
-      <a class="hide-sm" href="#tutorial">Tutorial</a>
+      <a class="hide-sm" href="tutorial.html">Setup guide</a>
       <a class="hide-sm" href="#security">Security</a>
       <a class="btn btn-ghost btn-sm" href="https://github.com/nowi333/xmrgate">
         <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
@@ -232,7 +86,7 @@ footer .links { gap: 22px; }
 <main>
 <header class="hero">
   <div class="wrap">
-    <img src="logo.svg" alt="xmrgate" width="72" height="72" style="margin:0 auto 22px;filter:drop-shadow(0 12px 34px rgba(242,104,34,.5))">
+    <img src="logo.svg?v=2" alt="xmrgate" width="72" height="72" style="margin:0 auto 22px;filter:drop-shadow(0 12px 34px rgba(242,104,34,.5))">
     <span class="pill"><b>Open source</b> · MIT · Self-hosted</span>
     <h1>Accept <em>Monero</em> on any website</h1>
     <p class="lead">Paste your wallet address and view key. That's it. No node to sync, no account, no fees. Every payment goes straight to your own wallet.</p>
@@ -241,9 +95,9 @@ footer .links { gap: 22px; }
         <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
         Get it on GitHub
       </a>
-      <a class="btn btn-ghost" href="#tutorial">
-        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
-        Watch the tutorial
+      <a class="btn btn-ghost" href="tutorial.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+        Get your setup guide
       </a>
     </div>
     <div class="facts"><span>No spend key, ever</span><span>~10 MB, ~12 MB RAM</span><span>WooCommerce plugin included</span></div>
@@ -397,7 +251,7 @@ X-Xmrgate-Signature: <span class="s">hmac-sha256(body)</span></pre>
       </div>
       <div class="cta">
         <a class="btn btn-primary" href="https://github.com/nowi333/xmrgate">View on GitHub</a>
-        <a class="btn btn-ghost" href="https://github.com/nowi333/xmrgate/blob/main/docs/guide.md">Read the user guide</a>
+        <a class="btn btn-ghost" href="tutorial.html">Get your setup guide</a>
       </div>
       <p class="note">Early software: well tested, not yet audited. Start with small amounts.</p>
     </div>
@@ -408,10 +262,11 @@ X-Xmrgate-Signature: <span class="s">hmac-sha256(body)</span></pre>
 
 <footer>
   <div class="wrap">
-    <span style="display:flex;align-items:center;gap:10px"><img src="logo.svg" alt="" width="22" height="22">xmrgate · MIT licensed</span>
+    <span style="display:flex;align-items:center;gap:10px"><img src="logo.svg?v=2" alt="" width="22" height="22">xmrgate · MIT licensed</span>
     <div class="links">
       <a href="https://github.com/nowi333/xmrgate">GitHub</a>
-      <a href="https://github.com/nowi333/xmrgate/blob/main/docs/guide.md">Guide</a>
+      <a href="tutorial.html">Setup guide</a>
+      <a href="https://github.com/nowi333/xmrgate/blob/main/docs/guide.md">User guide</a>
       <a href="https://x.com/dev_nowi333">X</a>
     </div>
   </div>
