@@ -32,9 +32,12 @@ final class Xmrgate_Blocks_Support extends AbstractPaymentMethodType {
 	}
 
 	public function get_payment_method_data() {
+		$gateways = WC()->payment_gateways()->payment_gateways();
+		$gateway  = isset( $gateways['xmrgate'] ) ? $gateways['xmrgate'] : null;
 		return array(
 			'title'       => $this->get_setting( 'title', 'Monero (XMR)' ),
-			'description' => $this->get_setting( 'description', '' ),
+			// Includes the sentence about the Monero discount or fee, if one is set.
+			'description' => $gateway ? $gateway->description : $this->get_setting( 'description', '' ),
 			'supports'    => array( 'products' ),
 		);
 	}

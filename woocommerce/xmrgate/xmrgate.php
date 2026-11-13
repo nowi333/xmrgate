@@ -56,6 +56,52 @@ add_action(
 	}
 );
 
+/**
+ * The Monero gateway object, when WooCommerce has it enabled.
+ */
+function xmrgate_gateway() {
+	if ( ! function_exists( 'WC' ) || ! WC()->payment_gateways() ) {
+		return null;
+	}
+	$gateways = WC()->payment_gateways()->payment_gateways();
+	return isset( $gateways['xmrgate'] ) && 'yes' === $gateways['xmrgate']->enabled ? $gateways['xmrgate'] : null;
+}
+
+// Show the Monero discount or fee in the classic cart and checkout totals once Monero is chosen.
+// The order itself gets it when the customer pays, whatever checkout the shop uses.
+add_action(
+	'woocommerce_cart_calculate_fees',
+	function ( $cart ) {
+		$gateway = xmrgate_gateway();
+		if ( ! $gateway || 0.0 === $gateway->adjustment_percent() || ! WC()->session ) {
+			return;
+		}
+		if ( 'xmrgate' !== WC()->session->get( 'chosen_payment_method' ) ) {
+			return;
+		}
+		$base   = (float) $cart->get_cart_contents_total() + (float) $cart->get_shipping_total();
+		$amount = $gateway->adjustment_amount( $base );
+		if ( 0.0 !== $amount ) {
+			$cart->add_fee( $gateway->adjustment_label(), $amount, false );
+		}
+	}
+);
+
+// The classic checkout does not refresh its totals when the payment method changes.
+add_action(
+	'wp_enqueue_scripts',
+	function () {
+		$gateway = xmrgate_gateway();
+		if ( ! $gateway || 0.0 === $gateway->adjustment_percent() || ! function_exists( 'is_checkout' ) || ! is_checkout() ) {
+			return;
+		}
+		wp_add_inline_script(
+			'wc-checkout',
+			"jQuery( function ( $ ) { $( 'form.checkout' ).on( 'change', 'input[name=\"payment_method\"]', function () { $( document.body ).trigger( 'update_checkout' ); } ); } );"
+		);
+	}
+);
+
 add_action(
 	'woocommerce_blocks_loaded',
 	function () {

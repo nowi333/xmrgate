@@ -157,6 +157,12 @@ nothing.
 WooCommerce tells you immediately whether it worked. *"Connected to your xmrgate gateway"*
 means you are done. If the key is wrong or the address cannot be reached, it says which.
 
+**Optional: a discount or a fee for Monero.** In the same settings, **Discount or fee (%)**
+changes the price for customers who pay with Monero. Enter `-5` to give 5% off, or `2` to add
+a 2% fee; `0` means neither. It is calculated on the products and shipping, before tax. It shows
+as its own line (*"Monero discount (5%)"*) in the checkout, the order and the emails, and the
+checkout text tells the customer about it.
+
 Your customers now see Monero at checkout:
 
 ![Monero at the WooCommerce checkout](images/woocommerce-checkout.png)

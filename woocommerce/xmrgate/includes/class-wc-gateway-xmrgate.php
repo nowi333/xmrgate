@@ -23,7 +23,7 @@ class WC_Gateway_Xmrgate extends WC_Payment_Gateway {
 		$this->init_settings();
 
 		$this->title       = $this->get_option( 'title' );
-		$this->description = $this->get_option( 'description' );
+		$this->description = trim( $this->get_option( 'description' ) . ' ' . $this->adjustment_notice() );
 
 		add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
 	}
@@ -58,6 +58,17 @@ class WC_Gateway_Xmrgate extends WC_Payment_Gateway {
 				'title'   => __( 'Text shown at checkout', 'xmrgate' ),
 				'type'    => 'textarea',
 				'default' => __( 'Pay privately with Monero. You will be shown a QR code to scan with your wallet.', 'xmrgate' ),
+			),
+			'adjustment'  => array(
+				'title'             => __( 'Discount or fee (%)', 'xmrgate' ),
+				'type'              => 'number',
+				'description'       => __( 'Change the price for customers who pay with Monero. A negative number is a discount (-5 gives 5% off), a positive number is a fee (2 adds 2%). Leave 0 for none. It applies to the products and shipping, before tax.', 'xmrgate' ),
+				'default'           => '0',
+				'custom_attributes' => array(
+					'step' => '0.01',
+					'min'  => '-100',
+					'max'  => '100',
+				),
 			),
 		);
 	}
@@ -94,6 +105,82 @@ class WC_Gateway_Xmrgate extends WC_Payment_Gateway {
 			WC_Admin_Settings::add_error( __( 'Monero: this address did not answer like an xmrgate gateway. Check the gateway address.', 'xmrgate' ) );
 		}
 		return $saved;
+	}
+
+	/**
+	 * The discount (negative) or fee (positive) in percent, between -100 and 100.
+	 */
+	public function adjustment_percent() {
+		$value = (float) str_replace( ',', '.', (string) $this->get_option( 'adjustment', '0' ) );
+		return max( -100.0, min( 100.0, $value ) );
+	}
+
+	/**
+	 * The name of the discount or fee line, shown in the cart, the order and the emails.
+	 */
+	public function adjustment_label() {
+		$percent = wc_format_localized_decimal( (string) abs( $this->adjustment_percent() ) );
+		return $this->adjustment_percent() < 0
+			/* translators: %s: percentage */
+			? sprintf( __( 'Monero discount (%s%%)', 'xmrgate' ), $percent )
+			/* translators: %s: percentage */
+			: sprintf( __( 'Monero fee (%s%%)', 'xmrgate' ), $percent );
+	}
+
+	/**
+	 * The sentence added to the checkout text when a discount or fee is set.
+	 */
+	private function adjustment_notice() {
+		$adjustment = $this->adjustment_percent();
+		if ( 0.0 === $adjustment ) {
+			return '';
+		}
+		$percent = wc_format_localized_decimal( (string) abs( $adjustment ) );
+		return $adjustment < 0
+			/* translators: %s: percentage */
+			? sprintf( __( 'You get %s%% off when you pay with Monero.', 'xmrgate' ), $percent )
+			/* translators: %s: percentage */
+			: sprintf( __( 'A %s%% fee applies when you pay with Monero.', 'xmrgate' ), $percent );
+	}
+
+	/**
+	 * The discount or fee amount for a base of products plus shipping, before tax.
+	 */
+	public function adjustment_amount( $base ) {
+		return round( (float) $base * $this->adjustment_percent() / 100, wc_get_price_decimals() );
+	}
+
+	/**
+	 * Put the discount or fee on the order, replacing any earlier one. Done when the customer
+	 * pays, so the amount is right whatever checkout the shop uses and on every retry.
+	 */
+	private function apply_adjustment( $order ) {
+		$changed = false;
+		foreach ( $order->get_fees() as $item_id => $fee ) {
+			// The classic checkout already copied the cart line, under the same name.
+			if ( $fee->get_meta( '_xmrgate_adjustment' ) || $fee->get_name() === $this->adjustment_label() ) {
+				$order->remove_item( $item_id );
+				$changed = true;
+			}
+		}
+
+		$base   = (float) $order->get_subtotal() - (float) $order->get_discount_total() + (float) $order->get_shipping_total();
+		$amount = $this->adjustment_amount( $base );
+		if ( 0.0 !== $amount ) {
+			$fee = new WC_Order_Item_Fee();
+			$fee->set_name( $this->adjustment_label() );
+			$fee->set_amount( $amount );
+			$fee->set_total( $amount );
+			$fee->set_tax_status( 'none' );
+			$fee->add_meta_data( '_xmrgate_adjustment', '1', true );
+			$order->add_item( $fee );
+			$changed = true;
+		}
+
+		if ( $changed ) {
+			$order->calculate_totals( false );
+			$order->save();
+		}
 	}
 
 	public function is_available() {
@@ -134,6 +221,7 @@ class WC_Gateway_Xmrgate extends WC_Payment_Gateway {
 
 	public function process_payment( $order_id ) {
 		$order = wc_get_order( $order_id );
+		$this->apply_adjustment( $order );
 
 		$response = $this->request(
 			'POST',
