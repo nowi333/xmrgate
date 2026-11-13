@@ -36,7 +36,8 @@ English subtitles):
 | **WooCommerce** | Plugin, downloadable from the dashboard | None |
 | **Any page, email or profile** | Payment buttons: fixed-price links | None |
 | **One customer** | One-time payment links | None |
-| **PrestaShop, custom shops, apps…** | Small HTTP API with signed webhooks | A few lines, with tested PHP, Node.js and Python examples |
+| **PrestaShop** | Module, downloadable from the dashboard | None |
+| **Custom shops, apps…** | Small HTTP API with signed webhooks | A few lines, with tested PHP, Node.js and Python examples |
 
 One gateway serves as many websites as you like. Each has its own secret key and only sees
 its own payments.

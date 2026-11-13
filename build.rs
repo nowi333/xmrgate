@@ -1,4 +1,5 @@
-//! Packs the WooCommerce plugin into a zip that the gateway serves from its dashboard.
+//! Packs the WooCommerce plugin and the PrestaShop module into zips that the gateway serves
+//! from its dashboard.
 
 use std::{
   env, fs,
@@ -25,11 +26,16 @@ fn add(zip: &mut zip::ZipWriter<fs::File>, dir: &Path, prefix: &str) {
   }
 }
 
-fn main() {
-  let source = Path::new("woocommerce/xmrgate");
+fn pack(source: &str, file: &str) {
+  let source = Path::new(source);
   println!("cargo:rerun-if-changed={}", source.display());
-  let out = PathBuf::from(env::var("OUT_DIR").unwrap()).join("xmrgate-woocommerce.zip");
+  let out = PathBuf::from(env::var("OUT_DIR").unwrap()).join(file);
   let mut zip = zip::ZipWriter::new(fs::File::create(out).unwrap());
   add(&mut zip, source, "xmrgate");
   zip.finish().unwrap();
+}
+
+fn main() {
+  pack("woocommerce/xmrgate", "xmrgate-woocommerce.zip");
+  pack("prestashop/xmrgate", "xmrgate-prestashop.zip");
 }

@@ -234,6 +234,25 @@ async fn dashboard_serves_the_woocommerce_plugin() {
 }
 
 #[tokio::test]
+async fn dashboard_serves_the_prestashop_module() {
+  let h = harness().await;
+  let response = h.http.get(format!("{}/downloads/xmrgate-prestashop.zip", h.base)).send().await.unwrap();
+  assert_eq!(response.headers()["content-type"], "application/zip");
+  let bytes = response.bytes().await.unwrap();
+  assert_eq!(&bytes[.. 2], b"PK");
+  let listing = String::from_utf8_lossy(&bytes);
+  for file in [
+    "xmrgate/xmrgate.php",
+    "xmrgate/logo.png",
+    "xmrgate/controllers/front/validation.php",
+    "xmrgate/controllers/front/webhook.php",
+    "xmrgate/controllers/front/return.php",
+  ] {
+    assert!(listing.contains(file), "{file} is missing from the module zip");
+  }
+}
+
+#[tokio::test]
 async fn invoices_reject_bad_input() {
   let h = harness().await;
   let (cookie, key) = h.set_up().await;

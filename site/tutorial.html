@@ -143,7 +143,7 @@ ol.steps-list code { font-family: var(--mono); font-size: 13.5px; color: var(--t
       <p class="hint">Pick the main one. You can add the others later from the same dashboard.</p>
       <div class="opts" data-name="site">
         <div class="opt"><input type="radio" name="site" id="s-woo" value="woo"><label for="s-woo"><b>WooCommerce</b><span>WordPress shop, ready-made plugin</span></label></div>
-        <div class="opt"><input type="radio" name="site" id="s-presta" value="presta"><label for="s-presta"><b>PrestaShop</b><span>Through the API</span></label></div>
+        <div class="opt"><input type="radio" name="site" id="s-presta" value="presta"><label for="s-presta"><b>PrestaShop</b><span>Ready-made module</span></label></div>
         <div class="opt"><input type="radio" name="site" id="s-code" value="code"><label for="s-code"><b>My own website or app</b><span>A few lines of code</span></label></div>
         <div class="opt"><input type="radio" name="site" id="s-button" value="button"><label for="s-button"><b>A payment button</b><span>A link for a page, a bio, an email. No code.</span></label></div>
         <div class="opt"><input type="radio" name="site" id="s-link" value="link"><label for="s-link"><b>One customer</b><span>Send a one-time payment link. No code.</span></label></div>
@@ -330,7 +330,19 @@ ol.steps-list code { font-family: var(--mono); font-size: 13.5px; color: var(--t
             '<p>Prefer to watch? The <a href="./#tutorial">video tutorial</a> shows the whole WooCommerce setup in under 4 minutes.</p>')
         ];
       case 'presta':
-        return apiSteps(tip('There is no ready-made PrestaShop module yet. PrestaShop connects through the API, like any website: the PHP example below is the starting point for a small payment module.'));
+        return [
+          step('Install the PrestaShop module', '<ol>' +
+            '<li>In your xmrgate dashboard, under <b>Connect a website</b>, add a website named <i>PrestaShop</i> and copy its <b>secret key</b>.</li>' +
+            '<li>Click <b>Download the PrestaShop module</b>.</li>' +
+            '<li>In PrestaShop, go to <b>Modules → Module Manager → Upload a module</b> and choose that file.</li></ol>' +
+            tip('Works with PrestaShop 1.7.7 and later, including 8 and 9.')),
+          step('Connect PrestaShop to your gateway', '<ol>' +
+            '<li>Click <b>Configure</b> on the <b>Monero (xmrgate)</b> module.</li>' +
+            '<li>Paste the <b>gateway address</b> (<code>https://' + esc(d) + '</code>) and the <b>secret key</b>.</li>' +
+            '<li>Press <b>Save</b>. PrestaShop says <i>"Connected to your xmrgate gateway"</i> when it works.</li></ol>'),
+          step('Orders update on their own', '<p><b>Monero (XMR)</b> now appears among the payment methods. Orders go from <b>Awaiting Monero payment</b> to <b>Monero payment detected, confirming</b>, then <b>Payment accepted</b> once the network confirms it, usually within minutes.</p>' +
+            tip('If a customer pays only part of the amount, the order shows <b>Monero payment incomplete</b>. If nobody pays in time, it is <b>Canceled</b>.'))
+        ];
       case 'code':
         return apiSteps('');
       case 'button':

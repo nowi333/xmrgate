@@ -23,6 +23,8 @@
       how_title: "How to connect",
       how_woo: "Install the plugin, then paste the gateway address and the website's secret key under WooCommerce → Settings → Payments → Monero.",
       download: "Download the WooCommerce plugin",
+      how_presta: "Upload the module under Modules → Module Manager, then paste the gateway address and the website's secret key in its Configure page.",
+      download_presta: "Download the PrestaShop module",
       how_any_title: "Any other website.",
       how_any: "A few lines of code in any language: create a payment, send the customer to it, get called back when it is paid.",
       how_any_link: "Open the developer guide",

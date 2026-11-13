@@ -91,7 +91,7 @@ h2 { font-size: clamp(30px, 4.4vw, 46px); line-height: 1.12; letter-spacing: -.0
 .video video { width: 100%; aspect-ratio: 16 / 9; }
 
 /* Works with */
-.works { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+.works { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
 .work { border: 1px solid var(--line); border-radius: var(--radius); padding: 26px; background: var(--card); display: flex; flex-direction: column; }
 .work h3 { margin: 0 0 6px; font-size: 19px; }
 .work p { margin: 0 0 18px; color: var(--muted); font-size: 15.5px; flex: 1; }

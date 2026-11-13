@@ -1021,6 +1021,19 @@ async fn plugin_download() -> Response {
     .into_response()
 }
 
+/// The PrestaShop module, packed at build time.
+async fn prestashop_download() -> Response {
+  static ZIP: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/xmrgate-prestashop.zip"));
+  (
+    [
+      (header::CONTENT_TYPE, "application/zip"),
+      (header::CONTENT_DISPOSITION, "attachment; filename=\"xmrgate-prestashop.zip\""),
+    ],
+    ZIP,
+  )
+    .into_response()
+}
+
 async fn security_headers(request: Request, next: Next) -> Response {
   let mut response = next.run(request).await;
   let headers = response.headers_mut();
@@ -1066,6 +1079,7 @@ pub fn router(app: Arc<App>) -> Router {
     .route("/pay/{id}/qr.svg", get(checkout_qr))
     .route("/health", get(health))
     .route("/downloads/xmrgate-woocommerce.zip", get(plugin_download))
+    .route("/downloads/xmrgate-prestashop.zip", get(prestashop_download))
     .route("/assets/app.css", get(|| async { asset("text/css; charset=utf-8", include_str!("../web/app.css")) }))
     .route("/assets/common.js", get(|| async { asset("text/javascript; charset=utf-8", include_str!("../web/common.js")) }))
     .route("/assets/setup.js", get(|| async { asset("text/javascript; charset=utf-8", include_str!("../web/setup.js")) }))

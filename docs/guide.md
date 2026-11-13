@@ -11,11 +11,12 @@ nothing to your first payment. No technical background is needed for most of it.
 2. [Install xmrgate](#2-install-xmrgate)
 3. [Set it up (one screen)](#3-set-it-up-one-screen)
 4. [Your dashboard](#4-your-dashboard)
-5. [Get paid: four ways](#5-get-paid-four-ways)
+5. [Get paid: five ways](#5-get-paid-five-ways)
    - [A WooCommerce shop](#a-a-woocommerce-shop)
-   - [A payment button (no code)](#b-a-payment-button-no-code)
-   - [A one-time payment link](#c-a-one-time-payment-link)
-   - [Any other website](#d-any-other-website)
+   - [A PrestaShop store](#b-a-prestashop-store)
+   - [A payment button (no code)](#c-a-payment-button-no-code)
+   - [A one-time payment link](#d-a-one-time-payment-link)
+   - [Any other website](#e-any-other-website)
 6. [What your customer sees](#6-what-your-customer-sees)
 7. [Follow your payments](#7-follow-your-payments)
 8. [Settings](#8-settings)
@@ -137,7 +138,7 @@ nothing.
 
 ---
 
-## 5. Get paid: four ways
+## 5. Get paid: five ways
 
 ### A. A WooCommerce shop
 
@@ -178,7 +179,31 @@ Orders update on their own:
 
 ![Paid orders in WooCommerce](images/woocommerce-orders.png)
 
-### B. A payment button (no code)
+### B. A PrestaShop store
+
+1. In the dashboard, under **Connect a website**, click **Download the PrestaShop module**.
+2. In PrestaShop, go to **Modules → Module Manager → Upload a module** and choose the file you
+   just downloaded.
+3. Click **Configure** on the module.
+4. Paste the **gateway address** and your website's **secret key**, both shown in the
+   dashboard, then press **Save**.
+
+PrestaShop tells you immediately whether it worked. *"Connected to your xmrgate gateway"*
+means you are done: **Monero (XMR)** now appears among the payment methods at checkout.
+
+Orders update on their own:
+
+| What happened | Order status in PrestaShop |
+|---|---|
+| The customer chose Monero | **Awaiting Monero payment** |
+| The customer's payment was detected | **Monero payment detected, confirming** |
+| The payment is confirmed | **Payment accepted**, with the xmrgate invoice as transaction ID |
+| The customer paid only part of it | **Monero payment incomplete** |
+| Nobody paid in time | **Canceled** |
+
+The module works with PrestaShop 1.7.7 and later, including 8 and 9.
+
+### C. A payment button (no code)
 
 A payment button is a permanent link with a fixed price. Use it to sell one thing, take
 donations, or get paid from a page you cannot add code to.
@@ -199,7 +224,7 @@ Then either:
 
 Each person who presses the button gets their own payment page and their own payment address.
 
-### C. A one-time payment link
+### D. A one-time payment link
 
 For a single customer: an invoice, a quote, a custom order.
 
@@ -209,9 +234,9 @@ Under **Request a payment**, type the amount, choose the currency, add a short d
 and press **Create payment link**. Send the link to your customer. It works once and expires
 after 10 minutes unless you change that in the settings.
 
-### D. Any other website
+### E. Any other website
 
-Any website that can run a little code can use xmrgate: PrestaShop, a custom shop, a booking
+Any website that can run a little code can use xmrgate: a custom shop, a booking
 system, a membership site.
 
 Your gateway includes a developer guide at **`https://your-gateway/docs`**, also linked from
