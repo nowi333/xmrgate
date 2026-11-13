@@ -2,6 +2,7 @@
 
 [![CI](https://github.com/nowi333/xmrgate/actions/workflows/ci.yml/badge.svg)](https://github.com/nowi333/xmrgate/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Website](https://img.shields.io/badge/website-nowi333.github.io%2Fxmrgate-f26822.svg)](https://nowi333.github.io/xmrgate/)
 
 **A Monero payment gateway for any website.** WooCommerce, a custom shop, a single "pay"
 link on a static page: they all get paid straight into your own wallet.
