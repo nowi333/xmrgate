@@ -2,10 +2,14 @@
   <defs>
     <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0" stop-color="#ff8a4c"/>
-      <stop offset="1" stop-color="#e2561a"/>
+      <stop offset="1" stop-color="#f26822"/>
     </linearGradient>
+    <clipPath id="c"><rect width="64" height="64" rx="16"/></clipPath>
   </defs>
-  <rect width="64" height="64" rx="16" fill="url(#g)"/>
-  <path d="M17 48V30a15 15 0 0 1 30 0v18" fill="none" stroke="#fff" stroke-width="5.5" stroke-linecap="round"/>
-  <path d="M32 24v17m-7-7 7 7 7-7" fill="none" stroke="#fff" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <g clip-path="url(#c)">
+    <rect width="64" height="64" fill="url(#g)"/>
+    <rect y="45" width="64" height="19" fill="#4c4c4c"/>
+  </g>
+  <path d="M16 52V29a16 16 0 0 1 32 0v23" fill="none" stroke="#fff" stroke-width="5.5" stroke-linecap="round"/>
+  <path d="M23 29l9 10 9-10" fill="none" stroke="#fff" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>
